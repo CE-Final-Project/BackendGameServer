@@ -1,0 +1,26 @@
+serviceName: account_service
+grpc:
+  port: :5003
+  development: true
+logger:
+  level: debug
+  devMode: false
+  encoder: json
+kafka:
+  brokers: [ "localhost:29092" ]
+  groupID: account_microservice
+  initTopics: true
+postgres:
+  driver: "postgres"
+  host: "localhost"
+  port: 5432
+  user: account
+  password: "3uP*SHMmk$*ri"
+  dbName: account_db
+redis:
+  addr: "localhost:6379"
+  password: "zwLKq&KHb2HhphJF"
+  db: 0
+  poolSize: 300
+jwt:
+  secret: "m%Pha8*Z6$hnUCYR@DtCY%7j!S#xceGFuC3Qd6^Nte&7&SkucS"

@@ -1,0 +1,31 @@
+serviceName: "gateway_service"
+grpc:
+  authServicePort: :5003
+logger:
+  level: debug
+  devMode: false
+  encoder: json
+http:
+  port: :8001
+  development: true
+  basePath: /api/v1
+  debugHeaders: false
+  httpClientDebug: false
+  debugErrorsResponse: true
+  ignoreLogUrls: []
+jwt:
+  headerAuthorization: X-AUTH-TOKEN
+  secret: "m%Pha8*Z6$hnUCYR@DtCY%7j!S#xceGFuC3Qd6^Nte&7&SkucS"
+kafka:
+  brokers: [ "localhost:29092" ]
+  groupID: api_gateway_consumer
+  initTopics: true
+kafkaTopics:
+  accountRegister:
+    topicName: account_register
+    partitions: 10
+    replicationFactor: 1
+  accountUpdate:
+    topicName: account_update
+    partitions: 10
+    replicationFactor: 1

@@ -1,0 +1,71 @@
+syntax="proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package authentication;
+
+option go_package="./;authService";
+
+message Account{
+  string AccountID = 1;
+  string PlayerID = 2;
+  string Username = 3;
+  string Email = 4;
+  bool IsBan = 6;
+  google.protobuf.Timestamp CreatedAt = 7;
+  google.protobuf.Timestamp UpdatedAt = 8;
+}
+
+message VerifyTokenReq {
+  string Token = 1;
+}
+
+message VerifyTokenRes{
+  bool Valid = 1;
+  string AccountID = 2;
+  string PlayerID = 3;
+}
+
+message LoginReq {
+  string Username = 1;
+  string Password = 2;
+}
+
+message LoginRes{
+  string Token = 1;
+  string AccountID = 2;
+  string PlayerID = 3;
+}
+
+message RegisterReq {
+  string Username = 1;
+  string Email = 2;
+  string Password = 3;
+}
+
+message RegisterRes {
+  string Token = 1;
+  string AccountID = 2;
+  string PlayerID = 3;
+}
+
+message UpdateAccountReq{
+  string AccountID  = 1;
+  string Username = 2;
+  string Email = 3;
+}
+
+message ChangePasswordReq{
+  string AccountID = 1;
+  string OldPassword = 2;
+  string NewPassword = 3;
+}
+
+message UpdateAccountRes{
+  string AccountID = 1;
+  google.protobuf.Timestamp UpdatedAt = 2;
+}
+
+message GetAccountByIdReq{
+  string AccountID = 1;
+}

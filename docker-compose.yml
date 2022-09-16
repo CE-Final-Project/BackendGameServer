@@ -1,0 +1,80 @@
+version: '3.9'
+services:
+  auth_service:
+    container_name: auth_service
+    build:
+      context: .
+      dockerfile: Docker/auth.Dockerfile
+    networks:
+      - game_server
+    environment:
+      TZ: "Asia/Bangkok"
+    ports:
+      - "5003:5003"
+  database:
+    container_name: postgres_game_db
+    image: postgres:14-alpine
+    networks:
+      - game_server
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+      - ./init_db_script/:/docker-entrypoint-initdb.d/
+    ports:
+      - "5432:5432"
+    environment:
+      TZ: "Asia/Bangkok"
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "2iNyADya#bUu9"
+      POSTGRES_DB: "root"
+  database_admin:
+    container_name: postgres_game_admin
+    image: dpage/pgadmin4:6
+    ports:
+      - "9000:80"
+    networks:
+      - game_server
+    depends_on:
+      - database
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@kmitl.ac.th"
+      PGADMIN_DEFAULT_PASSWORD: "s8KHf^fLFWHppKtUJf7VtTE"
+  zookeeper:
+    image: zookeeper:3.5
+    container_name: zookeeper
+    networks:
+      - game_server
+    volumes:
+      - ./zookeeper/data:/data
+      - ./zookeeper/datalog:/datalog
+
+  kafka:
+    image: bitnami/kafka
+    container_name: kafka
+    networks:
+      - game_server
+    ports:
+      - "29092:29092"
+    volumes:
+      - ./kafka:/bitnami/kafka/data
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_BROKER_ID=1
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:29092
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    depends_on:
+      - zookeeper
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/data
+      - ./redis/config/redis.conf:/redis.conf
+    command: redis-server /redis.conf
+
+networks:
+  game_server:
+    name: game_server
