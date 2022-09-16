@@ -1,5 +1,5 @@
 
 /postgres/
-/redis/
+/redis/data/
 /zookeeper/
 /kafka/
