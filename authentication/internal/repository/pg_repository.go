@@ -16,7 +16,7 @@ type postgresRepository struct {
 }
 
 func NewAccountRepository(log logger.Logger, db *sqlx.DB) (*postgresRepository, error) {
-	_, err := db.ExecContext(context.Background(), initAccountTable)
+	_, err := db.ExecContext(context.Background(), initAllTable)
 	if err != nil {
 		return nil, err
 	}

@@ -1,9 +1,11 @@
 package repository
 
 const (
+	initUUIDExtention = `
+     CREATE EXTENSION IF NOT EXISTS citext;
+	 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`
+
 	initAccountTable = `
-	 CREATE EXTENSION IF NOT EXISTS citext;
-	 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	  CREATE TABLE IF NOT EXISTS accounts (
       account_id UUID PRIMARY KEY         DEFAULT uuid_generate_v4(),
       player_id VARCHAR(11) NOT NULL UNIQUE CHECK ( player_id <> '' ),
@@ -13,7 +15,19 @@ const (
       is_ban BOOLEAN DEFAULT FALSE,
       created_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
       updated_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-	)`
+	);`
+
+	initFriendshipTable = `
+	CREATE TABLE IF NOT EXISTS friendship(
+	    account_id UUID,
+	    friend_id  UUID,
+	    PRIMARY KEY (account_id, friend_id),
+	    CONSTRAINT fk_account FOREIGN KEY (account_id) REFERENCES accounts(account_id),
+	    CONSTRAINT fr_friend FOREIGN KEY (friend_id) REFERENCES accounts(account_id)
+	);`
+
+	initAllTable = initUUIDExtention + initAccountTable + initFriendshipTable
+
 	createAccountQuery = `INSERT INTO accounts (account_id, player_id, username, email, password_hashed, is_ban, created_at, updated_at) 
 	VALUES ($1, $2, $3, $4, $5, $6, now(), now()) RETURNING account_id, player_id, username, email, password_hashed, is_ban, created_at, updated_at`
 
