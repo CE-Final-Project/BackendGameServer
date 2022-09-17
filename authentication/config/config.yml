@@ -12,13 +12,13 @@ kafka:
   initTopics: true
 postgres:
   driver: "postgres"
-  host: "localhost"
+  host: "database"
   port: 5432
   user: account
   password: "3uP*SHMmk$*ri"
   dbName: account_db
 redis:
-  addr: "localhost:6379"
+  addr: "redis:6379"
   password: "zwLKq&KHb2HhphJF"
   db: 0
   poolSize: 300
