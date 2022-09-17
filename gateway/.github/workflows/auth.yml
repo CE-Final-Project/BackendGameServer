@@ -1,0 +1,20 @@
+name: "auth"
+
+on:
+  push:
+    paths:
+      - "authentication/**"
+      - "pkg/**"
+      - ".github/workflows/auth.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      # run tests for route
+      - name: Run tests
+        run: |-
+          cd authentication
+          go test ./...
