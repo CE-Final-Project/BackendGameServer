@@ -13,7 +13,6 @@ require (
 	github.com/ce-final-project/backend_game_server/pkg v0.0.0-00010101000000-000000000000
 	github.com/ce-final-project/backend_game_server/proto v0.0.0-00010101000000-000000000000
 	github.com/go-playground/validator v9.31.0+incompatible
-	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/labstack/echo/v4 v4.9.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
