@@ -19,6 +19,8 @@ jobs:
           cd authentication
           go test ./...
   docker:
+    needs:
+      - test
     runs-on: ubuntu-latest
     steps:
       -
