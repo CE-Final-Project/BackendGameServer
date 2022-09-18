@@ -41,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./Docker/auth.DockerFile
+          file: ./Docker/auth.Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-auth_service:latest
