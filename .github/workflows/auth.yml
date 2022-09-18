@@ -41,6 +41,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: Docker/auth.DockerFile
+          file: ./Docker/auth.DockerFile
+          builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: kenta420/backend-game-server-auth_service:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-auth_service:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-auth_service:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-auth_service:buildcache,mode=max
