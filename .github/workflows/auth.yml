@@ -39,5 +39,5 @@ jobs:
         with:
           push: true
           context: .
-          file: docker/auth.DockerFile
+          file: Docker/auth.DockerFile
           tags: kenta420/backend-game-server-auth_service:latest
