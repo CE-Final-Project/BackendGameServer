@@ -3,9 +3,6 @@ services:
   gateway_service:
     container_name: gateway_service
     image: kenta420/backend-game-server-gateway_service:latest
-    build:
-      context: .
-      dockerfile: Docker/gateway.Dockerfile
     networks:
       - game_server
     depends_on:
@@ -17,9 +14,6 @@ services:
   auth_service:
     container_name: auth_service
     image: kenta420/backend-game-server-auth_service
-    build:
-      context: .
-      dockerfile: Docker/auth.Dockerfile
     networks:
       - game_server
     depends_on:
@@ -31,7 +25,6 @@ services:
       TZ: "Asia/Bangkok"
     ports:
       - "5003:5003"
-
   database:
     container_name: postgres_game_db
     image: postgres:14-alpine
@@ -107,6 +100,19 @@ services:
       - ./redis/data:/data
       - ./redis/config/redis.conf:/redis.conf
     command: redis-server /redis.conf
+  nginx:
+    image: jc21/nginx-proxy-manager
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+      - '8081:81'
+      - '8443:443'
+    networks:
+      - game_server
+    volumes:
+      - ./nginx/data:/data
+      - ./nginx/letsencrypt:/etc/letsencrypt
 
 networks:
   game_server:
