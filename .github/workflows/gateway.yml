@@ -1,11 +1,11 @@
-name: "auth"
+name: "gateway"
 
 on:
   push:
     paths:
-      - "authentication/**"
+      - "gateway/**"
       - "pkg/**"
-      - ".github/workflows/auth.yml"
+      - ".github/workflows/gateway.yml"
 
 jobs:
   test:
@@ -16,7 +16,7 @@ jobs:
       # run tests for route
       - name: Run tests
         run: |-
-          cd authentication
+          cd gateway
           go test ./...
   build_and_push:
     name: "Build Docker image and Push to Registry"
@@ -47,6 +47,6 @@ jobs:
           file: ./Docker/auth.Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-auth_service:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-auth_service:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-auth_service:buildcache,mode=max
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:buildcache,mode=max

@@ -2,6 +2,7 @@ version: '3.9'
 services:
   gateway_service:
     container_name: gateway_service
+    image: kenta420/backend-game-server-gateway_service:latest
     build:
       context: .
       dockerfile: Docker/gateway.Dockerfile
@@ -15,14 +16,17 @@ services:
       - "8001:8001"
   auth_service:
     container_name: auth_service
+    image: kenta420/backend-game-server-auth_service
     build:
       context: .
       dockerfile: Docker/auth.Dockerfile
     networks:
       - game_server
     depends_on:
-      - database
-      - redis
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       TZ: "Asia/Bangkok"
     ports:
@@ -38,6 +42,11 @@ services:
       - ./init_db_script/:/docker-entrypoint-initdb.d/
     ports:
       - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       TZ: "Asia/Bangkok"
       POSTGRES_USER: "admin"
@@ -89,6 +98,11 @@ services:
       - "6379:6379"
     networks:
       - game_server
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - ./redis/data:/data
       - ./redis/config/redis.conf:/redis.conf
