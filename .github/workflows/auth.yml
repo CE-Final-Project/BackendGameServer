@@ -50,3 +50,20 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-auth_service:latest
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-auth_service:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-auth_service:buildcache,mode=max
+  update_server:
+    name: "SSH update image on the server"
+    needs:
+      - build_and_push
+    runs-on: ubuntu-latest
+    steps:
+      - name: testing ssh on server connection
+        uses: appleboy/ssh-action@master
+        with:
+          host: game.kenta420.studio
+          username: analytic
+          key: ${{ secrets.SSH_SECRET }}
+          port: 22
+          script: |
+            cd backend_game_server
+            git pull origin main
+            git status

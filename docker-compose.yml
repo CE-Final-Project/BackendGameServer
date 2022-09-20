@@ -72,14 +72,14 @@ services:
     networks:
       - game_server
     ports:
-      - "29092:29092"
+      - "9092:9092"
     volumes:
       - ./kafka:/bitnami/kafka/data
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_BROKER_ID=1
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:29092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=1
     depends_on:
