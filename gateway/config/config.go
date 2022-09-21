@@ -15,6 +15,7 @@ type Config struct {
 	HTTP        Http
 	GRPC        Grpc
 	KafkaTopics KafkaTopics
+	Kafka       *kafka.Config
 	JWT         JWT
 }
 
@@ -40,13 +41,11 @@ type Grpc struct {
 type KafkaTopics struct {
 	AccountRegister kafka.TopicConfig
 	AccountUpdate   kafka.TopicConfig
+	AccountDelete   kafka.TopicConfig
 }
 
 func InitConfig() (*Config, error) {
 
-	//if err := initTimeZone(); err != nil {
-	//	return nil, err
-	//}
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./config")

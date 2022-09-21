@@ -1,12 +1,12 @@
 package middlewares
 
 import (
-	context2 "context"
 	"github.com/ce-final-project/backend_game_server/gateway/config"
-	"github.com/ce-final-project/backend_game_server/gateway/internal/service"
-	httpErrors "github.com/ce-final-project/backend_game_server/pkg/http_errors"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/pkg/errors"
 	"strings"
 	"time"
 )
@@ -20,11 +20,10 @@ type MiddlewareManager interface {
 type middlewareManager struct {
 	log logger.Logger
 	cfg *config.Config
-	as  service.AuthService
 }
 
-func NewMiddlewareManager(log logger.Logger, cfg *config.Config, as service.AuthService) *middlewareManager {
-	return &middlewareManager{log: log, cfg: cfg, as: as}
+func NewMiddlewareManager(log logger.Logger, cfg *config.Config) *middlewareManager {
+	return &middlewareManager{log: log, cfg: cfg}
 }
 
 func (mw *middlewareManager) RequestLoggerMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
@@ -47,56 +46,56 @@ func (mw *middlewareManager) RequestLoggerMiddleware(next echo.HandlerFunc) echo
 	}
 }
 
-//func (mw *middlewareManager) AuthorizationMiddleware() echo.MiddlewareFunc {
-//
-//	jwtConfig := middleware.JWTConfig{
-//		TokenLookup: "header:" + mw.cfg.JWT.HeaderAuthorization,
-//		ParseTokenFunc: func(auth string, c echo.Context) (interface{}, error) {
-//			keyFunc := func(t *jwt.Token) (interface{}, error) {
-//				if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-//					return nil, errors.New("jwt.Parse.Token.Method=" + t.Header["alg"].(string))
-//				}
-//				return []byte(mw.cfg.JWT.Secret), nil
-//			}
-//
-//			// claims are of type `jwt.MapClaims` when token is created with `jwt.Parse`
-//			token, err := jwt.Parse(auth, keyFunc)
-//			if err != nil {
-//				return nil, err
-//			}
-//			if !token.Valid {
-//				return nil, errors.New("invalid token")
-//			}
-//			return token, nil
-//		},
-//	}
-//
-//	return middleware.JWTWithConfig(jwtConfig)
-//}
-
 func (mw *middlewareManager) AuthorizationMiddleware() echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			ctx, cancel := context2.WithCancel(context2.Background())
-			defer cancel()
-			header := c.Request().Header
-			token := header.Get(mw.cfg.JWT.HeaderAuthorization)
-			mw.log.Debugf("Token from Header %v", token)
-			result, err := mw.as.VerifyToken(ctx, token)
+
+	jwtConfig := middleware.JWTConfig{
+		TokenLookup: "header:" + mw.cfg.JWT.HeaderAuthorization,
+		ParseTokenFunc: func(auth string, c echo.Context) (interface{}, error) {
+			keyFunc := func(t *jwt.Token) (interface{}, error) {
+				if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, errors.New("jwt.Parse.Token.Method=" + t.Header["alg"].(string))
+				}
+				return []byte(mw.cfg.JWT.Secret), nil
+			}
+
+			// claims are of type `jwt.MapClaims` when token is created with `jwt.Parse`
+			token, err := jwt.Parse(auth, keyFunc)
 			if err != nil {
-				return err
+				return nil, err
 			}
-			mw.log.Debugf("Result verifyToken %v", result)
-			if !result.Valid {
-				mw.log.WarnMsg("Invalid Token or Expired", httpErrors.WrongCredentials)
-				return httpErrors.ErrorCtxResponse(c, httpErrors.WrongCredentials, mw.cfg.HTTP.DebugErrorsResponse)
+			if !token.Valid {
+				return nil, errors.New("invalid token")
 			}
-			c.Request().Header.Set("User-ID", result.AccountID.String())
-			c.Request().Header.Set("Player-ID", result.PlayerID)
-			return next(c)
-		}
+			return token, nil
+		},
 	}
+
+	return middleware.JWTWithConfig(jwtConfig)
 }
+
+//func (mw *middlewareManager) AuthorizationMiddleware() echo.MiddlewareFunc {
+//	return func(next echo.HandlerFunc) echo.HandlerFunc {
+//		return func(c echo.Context) error {
+//			ctx, cancel := context2.WithCancel(context2.Background())
+//			defer cancel()
+//			header := c.Request().Header
+//			token := header.Get(mw.cfg.JWT.HeaderAuthorization)
+//			mw.log.Debugf("Token from Header %v", token)
+//			result, err := mw.as.VerifyToken(ctx, token)
+//			if err != nil {
+//				return err
+//			}
+//			mw.log.Debugf("Result verifyToken %v", result)
+//			if !result.Valid {
+//				mw.log.WarnMsg("Invalid Token or Expired", httpErrors.WrongCredentials)
+//				return httpErrors.ErrorCtxResponse(c, httpErrors.WrongCredentials, mw.cfg.HTTP.DebugErrorsResponse)
+//			}
+//			c.Request().Header.Set("User-ID", result.AccountID.String())
+//			c.Request().Header.Set("Player-ID", result.PlayerID)
+//			return next(c)
+//		}
+//	}
+//}
 
 func (mw *middlewareManager) checkIgnoredURI(requestURI string, uriList []string) bool {
 	for _, s := range uriList {

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/ce-final-project/backend_game_server/gateway/internal/commands"
 	"github.com/ce-final-project/backend_game_server/gateway/internal/dto"
 	uuid "github.com/satori/go.uuid"
 )
@@ -35,3 +36,8 @@ type AccountService interface {
 //
 //	return &AuthService{Commands: accountCommands, Queries: accountQueries}
 //}
+
+type AuthService struct {
+	Commands *commands.AuthCommands
+	Queries  *queries.AuthQueries
+}

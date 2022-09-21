@@ -31,10 +31,6 @@ type JWT struct {
 }
 
 func InitConfig() (*Config, error) {
-
-	//if err := initTimeZone(); err != nil {
-	//	return nil, err
-	//}
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./config")
@@ -54,12 +50,3 @@ func InitConfig() (*Config, error) {
 
 	return config, nil
 }
-
-//func initTimeZone() error {
-//	lct, err := time.LoadLocation("Asia/Bangkok")
-//	if err != nil {
-//		return errors.Wrap(err, "Initialize time zone error")
-//	}
-//	time.Local = lct
-//	return nil
-//}

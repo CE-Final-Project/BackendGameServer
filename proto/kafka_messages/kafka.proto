@@ -39,7 +39,6 @@ message Account {
 message AccountRegistered{
   string AccountID = 1;
   string PlayerID = 2;
-  string Token = 3;
 }
 
 message AccountUpdated{

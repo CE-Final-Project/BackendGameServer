@@ -13,4 +13,5 @@ service authService {
   rpc GetAccountById(GetAccountByIdReq) returns (Account);
   rpc VerifyToken(VerifyTokenReq) returns (VerifyTokenRes);
   rpc ChangePassword(ChangePasswordReq) returns (UpdateAccountRes);
+  rpc SearchAccount(SearchReq) returns (SearchRes);
 }

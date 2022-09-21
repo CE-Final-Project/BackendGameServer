@@ -21,5 +21,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="authentication" />
     <orderEntry type="module" module-name="gateway" />
+    <orderEntry type="module" module-name="account" />
   </component>
 </module>

@@ -1,0 +1,16 @@
+syntax="proto3";
+
+package account;
+
+option go_package="./;accountService";
+
+import "account_message.proto";
+
+service accountService {
+  rpc CreateAccount(CreateAccountReq) returns (CreateAccountRes);
+  rpc UpdateAccount(UpdateAccountReq) returns (UpdateAccountRes);
+  rpc GetAccountById(GetAccountByIdReq) returns (Account);
+  rpc ChangePassword(ChangePasswordReq) returns (UpdateAccountRes);
+  rpc SearchAccount(SearchReq) returns (SearchRes);
+  rpc DeleteAccountById(DeleteAccountByIdReq) returns (DeleteAccountByIdRes);
+}

@@ -8,6 +8,7 @@ import (
 	v1 "github.com/ce-final-project/backend_game_server/gateway/internal/delivery/http/v1"
 	"github.com/ce-final-project/backend_game_server/gateway/internal/middlewares"
 	"github.com/ce-final-project/backend_game_server/gateway/internal/service"
+	"github.com/ce-final-project/backend_game_server/pkg/kafka"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
@@ -39,6 +40,7 @@ func (s *server) Run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 
+	s.mw = middlewares.NewMiddlewareManager(s.log, s.cfg)
 	authServiceConn, err := client.NewAuthServiceConn(ctx, s.cfg)
 	if err != nil {
 		return err
@@ -46,9 +48,10 @@ func (s *server) Run() error {
 	defer authServiceConn.Close()
 	asClient := authService.NewAuthServiceClient(authServiceConn)
 
-	s.acs = service.NewAccountService(s.log, s.cfg, asClient)
-	s.as = service.NewAuthService(s.log, s.cfg, asClient)
-	s.mw = middlewares.NewMiddlewareManager(s.log, s.cfg, s.as)
+	kafkaProducer := kafka.NewProducer(s.log, s.cfg.Kafka.Brokers)
+
+	s.acs = service.NewAccountService(s.log, kafkaProducer, s.cfg, asClient)
+	s.as = service.NewAuthService(s.log, kafkaProducer, s.cfg, asClient)
 
 	authHandler := v1.NewAuthsHandlers(s.echo.Group("/api/v1"), s.log, s.mw, s.cfg, s.acs, s.as, s.v)
 	authHandler.MapRoutes()

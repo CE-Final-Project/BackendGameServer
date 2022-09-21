@@ -1,4 +1,4 @@
-serviceName: account_service
+serviceName: authentication_service
 grpc:
   port: :5003
   development: true
@@ -7,7 +7,7 @@ logger:
   devMode: false
   encoder: json
 kafka:
-  brokers: [ "localhost:29092" ]
+  brokers: [ "localhost:9092" ]
   groupID: account_microservice
   initTopics: true
 postgres:

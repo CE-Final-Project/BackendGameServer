@@ -89,12 +89,12 @@ func (q *Pagination) GetOrderBy() string {
 	return q.OrderBy
 }
 
-// GetPage Get OrderBy
+// GetPage Get Page
 func (q *Pagination) GetPage() int {
 	return q.Page
 }
 
-// GetSize Get OrderBy
+// GetSize Get Size
 func (q *Pagination) GetSize() int {
 	return q.Size
 }

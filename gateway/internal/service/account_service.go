@@ -5,21 +5,24 @@ import (
 	grpcAuthService "github.com/ce-final-project/backend_game_server/authentication/proto"
 	"github.com/ce-final-project/backend_game_server/gateway/config"
 	"github.com/ce-final-project/backend_game_server/gateway/internal/dto"
+	kafkaClient "github.com/ce-final-project/backend_game_server/pkg/kafka"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	uuid "github.com/satori/go.uuid"
 )
 
 type accountService struct {
-	log logger.Logger
-	cfg *config.Config
-	as  grpcAuthService.AuthServiceClient
+	log           logger.Logger
+	cfg           *config.Config
+	kafkaProducer kafkaClient.Producer
+	as            grpcAuthService.AuthServiceClient
 }
 
-func NewAccountService(log logger.Logger, cfg *config.Config, as grpcAuthService.AuthServiceClient) *accountService {
+func NewAccountService(log logger.Logger, kafkaProducer kafkaClient.Producer, cfg *config.Config, as grpcAuthService.AuthServiceClient) *accountService {
 	return &accountService{
-		log: log,
-		cfg: cfg,
-		as:  as,
+		log:           log,
+		kafkaProducer: kafkaProducer,
+		cfg:           cfg,
+		as:            as,
 	}
 }
 
