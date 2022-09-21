@@ -17,7 +17,7 @@ jwt:
   headerAuthorization: X-AUTH-TOKEN
   secret: "m%Pha8*Z6$hnUCYR@DtCY%7j!S#xceGFuC3Qd6^Nte&7&SkucS"
 kafka:
-  brokers: [ "localhost:29092" ]
+  brokers: [ "localhost:9092" ]
   groupID: api_gateway_consumer
   initTopics: true
 kafkaTopics:
