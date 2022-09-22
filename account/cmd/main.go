@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/ce-final-project/backend_game_server/authentication/config"
-	"github.com/ce-final-project/backend_game_server/authentication/internal/server"
+	"github.com/ce-final-project/backend_game_server/account/config"
+	"github.com/ce-final-project/backend_game_server/account/internal/server"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	_ "github.com/lib/pq"
 	"log"

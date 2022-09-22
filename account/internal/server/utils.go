@@ -26,8 +26,8 @@ func (s *server) connectKafkaBrokers(ctx context.Context) error {
 
 func (s *server) getConsumerGroupTopics() []string {
 	return []string{
-		s.cfg.KafkaTopics.AccountRegistered.TopicName,
-		s.cfg.KafkaTopics.AccountUpdated.TopicName,
-		s.cfg.KafkaTopics.AccountDeleted.TopicName,
+		s.cfg.KafkaTopics.AccountRegister.TopicName,
+		s.cfg.KafkaTopics.AccountUpdate.TopicName,
+		s.cfg.KafkaTopics.AccountDelete.TopicName,
 	}
 }

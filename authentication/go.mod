@@ -4,6 +4,10 @@ go 1.19
 
 replace github.com/ce-final-project/backend_game_server/pkg => ../pkg
 
+replace github.com/ce-final-project/backend_game_server/proto => ../proto
+
+replace github.com/ce-final-project/backend_game_server/account => ../account
+
 require (
 	github.com/ce-final-project/backend_game_server/pkg v0.0.0-00010101000000-000000000000
 	github.com/go-playground/validator v9.31.0+incompatible
@@ -20,6 +24,8 @@ require (
 )
 
 require (
+	github.com/ce-final-project/backend_game_server/account v0.0.0-00010101000000-000000000000 // indirect
+	github.com/ce-final-project/backend_game_server/proto v0.0.0-00010101000000-000000000000 // indirect
 	github.com/ce-final-project/backend_rest_api v0.0.0-20220908130108-d0580ac0c5e1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect

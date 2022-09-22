@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/ce-final-project/backend_game_server/authentication/internal/service"
+	grpcDelivery "github.com/ce-final-project/backend_game_server/authentication/internal/auth/delivery/grpc"
 	authService "github.com/ce-final-project/backend_game_server/authentication/proto"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
@@ -33,7 +33,7 @@ func (s *server) NewAuthGrpcServer() (func() error, *grpc.Server, error) {
 		}),
 	)
 
-	grpcService := service.NewGrpcService(s.log, s.cfg, s.v, s.as)
+	grpcService := grpcDelivery.NewGrpcService(s.log, s.cfg, s.v, s.as)
 	authService.RegisterAuthServiceServer(grpcServer, grpcService)
 
 	if s.cfg.GRPC.Development {

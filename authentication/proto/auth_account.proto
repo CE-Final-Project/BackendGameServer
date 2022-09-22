@@ -9,9 +9,5 @@ import "auth_message.proto";
 service authService {
   rpc Login(LoginReq) returns (LoginRes);
   rpc Register(RegisterReq) returns (RegisterRes);
-  rpc UpdateAccount(UpdateAccountReq) returns (UpdateAccountRes);
-  rpc GetAccountById(GetAccountByIdReq) returns (Account);
   rpc VerifyToken(VerifyTokenReq) returns (VerifyTokenRes);
-  rpc ChangePassword(ChangePasswordReq) returns (UpdateAccountRes);
-  rpc SearchAccount(SearchReq) returns (SearchRes);
 }

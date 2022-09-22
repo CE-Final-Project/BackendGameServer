@@ -24,11 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type AuthServiceClient interface {
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginRes, error)
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error)
-	UpdateAccount(ctx context.Context, in *UpdateAccountReq, opts ...grpc.CallOption) (*UpdateAccountRes, error)
-	GetAccountById(ctx context.Context, in *GetAccountByIdReq, opts ...grpc.CallOption) (*Account, error)
 	VerifyToken(ctx context.Context, in *VerifyTokenReq, opts ...grpc.CallOption) (*VerifyTokenRes, error)
-	ChangePassword(ctx context.Context, in *ChangePasswordReq, opts ...grpc.CallOption) (*UpdateAccountRes, error)
-	SearchAccount(ctx context.Context, in *SearchReq, opts ...grpc.CallOption) (*SearchRes, error)
 }
 
 type authServiceClient struct {
@@ -57,45 +53,9 @@ func (c *authServiceClient) Register(ctx context.Context, in *RegisterReq, opts 
 	return out, nil
 }
 
-func (c *authServiceClient) UpdateAccount(ctx context.Context, in *UpdateAccountReq, opts ...grpc.CallOption) (*UpdateAccountRes, error) {
-	out := new(UpdateAccountRes)
-	err := c.cc.Invoke(ctx, "/authentication.authService/UpdateAccount", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *authServiceClient) GetAccountById(ctx context.Context, in *GetAccountByIdReq, opts ...grpc.CallOption) (*Account, error) {
-	out := new(Account)
-	err := c.cc.Invoke(ctx, "/authentication.authService/GetAccountById", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *authServiceClient) VerifyToken(ctx context.Context, in *VerifyTokenReq, opts ...grpc.CallOption) (*VerifyTokenRes, error) {
 	out := new(VerifyTokenRes)
 	err := c.cc.Invoke(ctx, "/authentication.authService/VerifyToken", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *authServiceClient) ChangePassword(ctx context.Context, in *ChangePasswordReq, opts ...grpc.CallOption) (*UpdateAccountRes, error) {
-	out := new(UpdateAccountRes)
-	err := c.cc.Invoke(ctx, "/authentication.authService/ChangePassword", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *authServiceClient) SearchAccount(ctx context.Context, in *SearchReq, opts ...grpc.CallOption) (*SearchRes, error) {
-	out := new(SearchRes)
-	err := c.cc.Invoke(ctx, "/authentication.authService/SearchAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,11 +68,7 @@ func (c *authServiceClient) SearchAccount(ctx context.Context, in *SearchReq, op
 type AuthServiceServer interface {
 	Login(context.Context, *LoginReq) (*LoginRes, error)
 	Register(context.Context, *RegisterReq) (*RegisterRes, error)
-	UpdateAccount(context.Context, *UpdateAccountReq) (*UpdateAccountRes, error)
-	GetAccountById(context.Context, *GetAccountByIdReq) (*Account, error)
 	VerifyToken(context.Context, *VerifyTokenReq) (*VerifyTokenRes, error)
-	ChangePassword(context.Context, *ChangePasswordReq) (*UpdateAccountRes, error)
-	SearchAccount(context.Context, *SearchReq) (*SearchRes, error)
 }
 
 // UnimplementedAuthServiceServer should be embedded to have forward compatible implementations.
@@ -125,20 +81,8 @@ func (UnimplementedAuthServiceServer) Login(context.Context, *LoginReq) (*LoginR
 func (UnimplementedAuthServiceServer) Register(context.Context, *RegisterReq) (*RegisterRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedAuthServiceServer) UpdateAccount(context.Context, *UpdateAccountReq) (*UpdateAccountRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccount not implemented")
-}
-func (UnimplementedAuthServiceServer) GetAccountById(context.Context, *GetAccountByIdReq) (*Account, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccountById not implemented")
-}
 func (UnimplementedAuthServiceServer) VerifyToken(context.Context, *VerifyTokenReq) (*VerifyTokenRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyToken not implemented")
-}
-func (UnimplementedAuthServiceServer) ChangePassword(context.Context, *ChangePasswordReq) (*UpdateAccountRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
-}
-func (UnimplementedAuthServiceServer) SearchAccount(context.Context, *SearchReq) (*SearchRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchAccount not implemented")
 }
 
 // UnsafeAuthServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -188,42 +132,6 @@ func _AuthService_Register_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_UpdateAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateAccountReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthServiceServer).UpdateAccount(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/authentication.authService/UpdateAccount",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).UpdateAccount(ctx, req.(*UpdateAccountReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AuthService_GetAccountById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAccountByIdReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthServiceServer).GetAccountById(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/authentication.authService/GetAccountById",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).GetAccountById(ctx, req.(*GetAccountByIdReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AuthService_VerifyToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VerifyTokenReq)
 	if err := dec(in); err != nil {
@@ -238,42 +146,6 @@ func _AuthService_VerifyToken_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).VerifyToken(ctx, req.(*VerifyTokenReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AuthService_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChangePasswordReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthServiceServer).ChangePassword(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/authentication.authService/ChangePassword",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).ChangePassword(ctx, req.(*ChangePasswordReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AuthService_SearchAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthServiceServer).SearchAccount(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/authentication.authService/SearchAccount",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).SearchAccount(ctx, req.(*SearchReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -294,24 +166,8 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_Register_Handler,
 		},
 		{
-			MethodName: "UpdateAccount",
-			Handler:    _AuthService_UpdateAccount_Handler,
-		},
-		{
-			MethodName: "GetAccountById",
-			Handler:    _AuthService_GetAccountById_Handler,
-		},
-		{
 			MethodName: "VerifyToken",
 			Handler:    _AuthService_VerifyToken_Handler,
-		},
-		{
-			MethodName: "ChangePassword",
-			Handler:    _AuthService_ChangePassword_Handler,
-		},
-		{
-			MethodName: "SearchAccount",
-			Handler:    _AuthService_SearchAccount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
