@@ -50,6 +50,6 @@ func (c *createAccountHandler) Handle(ctx context.Context, command *CreateAccoun
 		return err
 	}
 
-	c.redisRepo.PutAccount(ctx, created.AccountID, created)
+	c.redisRepo.PutAccount(ctx, created.AccountID.String(), created)
 	return nil
 }

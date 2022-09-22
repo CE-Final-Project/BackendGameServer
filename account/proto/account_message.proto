@@ -45,6 +45,19 @@ message ChangePasswordReq{
   string NewPassword = 3;
 }
 
+message ChangePasswordRes{
+  string AccountID = 1;
+}
+
+message BanAccountByIdReq{
+  string AccountID = 1;
+  bool IsBan = 2;
+}
+
+message BanAccountByIdRes{
+  string AccountID = 1;
+}
+
 message GetAccountByIdReq{
   string AccountID = 1;
 }

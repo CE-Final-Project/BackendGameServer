@@ -24,8 +24,9 @@ const _ = grpc.SupportPackageIsVersion7
 type AccountServiceClient interface {
 	CreateAccount(ctx context.Context, in *CreateAccountReq, opts ...grpc.CallOption) (*CreateAccountRes, error)
 	UpdateAccount(ctx context.Context, in *UpdateAccountReq, opts ...grpc.CallOption) (*UpdateAccountRes, error)
-	GetAccountById(ctx context.Context, in *GetAccountByIdReq, opts ...grpc.CallOption) (*Account, error)
-	ChangePassword(ctx context.Context, in *ChangePasswordReq, opts ...grpc.CallOption) (*UpdateAccountRes, error)
+	GetAccountById(ctx context.Context, in *GetAccountByIdReq, opts ...grpc.CallOption) (*GetAccountByIdRes, error)
+	ChangePassword(ctx context.Context, in *ChangePasswordReq, opts ...grpc.CallOption) (*ChangePasswordRes, error)
+	BanAccountById(ctx context.Context, in *BanAccountByIdReq, opts ...grpc.CallOption) (*BanAccountByIdRes, error)
 	SearchAccount(ctx context.Context, in *SearchReq, opts ...grpc.CallOption) (*SearchRes, error)
 	DeleteAccountById(ctx context.Context, in *DeleteAccountByIdReq, opts ...grpc.CallOption) (*DeleteAccountByIdRes, error)
 }
@@ -56,8 +57,8 @@ func (c *accountServiceClient) UpdateAccount(ctx context.Context, in *UpdateAcco
 	return out, nil
 }
 
-func (c *accountServiceClient) GetAccountById(ctx context.Context, in *GetAccountByIdReq, opts ...grpc.CallOption) (*Account, error) {
-	out := new(Account)
+func (c *accountServiceClient) GetAccountById(ctx context.Context, in *GetAccountByIdReq, opts ...grpc.CallOption) (*GetAccountByIdRes, error) {
+	out := new(GetAccountByIdRes)
 	err := c.cc.Invoke(ctx, "/account.accountService/GetAccountById", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -65,9 +66,18 @@ func (c *accountServiceClient) GetAccountById(ctx context.Context, in *GetAccoun
 	return out, nil
 }
 
-func (c *accountServiceClient) ChangePassword(ctx context.Context, in *ChangePasswordReq, opts ...grpc.CallOption) (*UpdateAccountRes, error) {
-	out := new(UpdateAccountRes)
+func (c *accountServiceClient) ChangePassword(ctx context.Context, in *ChangePasswordReq, opts ...grpc.CallOption) (*ChangePasswordRes, error) {
+	out := new(ChangePasswordRes)
 	err := c.cc.Invoke(ctx, "/account.accountService/ChangePassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) BanAccountById(ctx context.Context, in *BanAccountByIdReq, opts ...grpc.CallOption) (*BanAccountByIdRes, error) {
+	out := new(BanAccountByIdRes)
+	err := c.cc.Invoke(ctx, "/account.accountService/BanAccountById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,8 +108,9 @@ func (c *accountServiceClient) DeleteAccountById(ctx context.Context, in *Delete
 type AccountServiceServer interface {
 	CreateAccount(context.Context, *CreateAccountReq) (*CreateAccountRes, error)
 	UpdateAccount(context.Context, *UpdateAccountReq) (*UpdateAccountRes, error)
-	GetAccountById(context.Context, *GetAccountByIdReq) (*Account, error)
-	ChangePassword(context.Context, *ChangePasswordReq) (*UpdateAccountRes, error)
+	GetAccountById(context.Context, *GetAccountByIdReq) (*GetAccountByIdRes, error)
+	ChangePassword(context.Context, *ChangePasswordReq) (*ChangePasswordRes, error)
+	BanAccountById(context.Context, *BanAccountByIdReq) (*BanAccountByIdRes, error)
 	SearchAccount(context.Context, *SearchReq) (*SearchRes, error)
 	DeleteAccountById(context.Context, *DeleteAccountByIdReq) (*DeleteAccountByIdRes, error)
 }
@@ -114,11 +125,14 @@ func (UnimplementedAccountServiceServer) CreateAccount(context.Context, *CreateA
 func (UnimplementedAccountServiceServer) UpdateAccount(context.Context, *UpdateAccountReq) (*UpdateAccountRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccount not implemented")
 }
-func (UnimplementedAccountServiceServer) GetAccountById(context.Context, *GetAccountByIdReq) (*Account, error) {
+func (UnimplementedAccountServiceServer) GetAccountById(context.Context, *GetAccountByIdReq) (*GetAccountByIdRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountById not implemented")
 }
-func (UnimplementedAccountServiceServer) ChangePassword(context.Context, *ChangePasswordReq) (*UpdateAccountRes, error) {
+func (UnimplementedAccountServiceServer) ChangePassword(context.Context, *ChangePasswordReq) (*ChangePasswordRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+}
+func (UnimplementedAccountServiceServer) BanAccountById(context.Context, *BanAccountByIdReq) (*BanAccountByIdRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BanAccountById not implemented")
 }
 func (UnimplementedAccountServiceServer) SearchAccount(context.Context, *SearchReq) (*SearchRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchAccount not implemented")
@@ -210,6 +224,24 @@ func _AccountService_ChangePassword_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccountService_BanAccountById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BanAccountByIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).BanAccountById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/account.accountService/BanAccountById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).BanAccountById(ctx, req.(*BanAccountByIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AccountService_SearchAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SearchReq)
 	if err := dec(in); err != nil {
@@ -268,6 +300,10 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangePassword",
 			Handler:    _AccountService_ChangePassword_Handler,
+		},
+		{
+			MethodName: "BanAccountById",
+			Handler:    _AccountService_BanAccountById_Handler,
 		},
 		{
 			MethodName: "SearchAccount",

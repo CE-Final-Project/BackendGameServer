@@ -6,21 +6,25 @@ import (
 )
 
 type AccountCommands struct {
-	CreateAccount CreateAccountCmdHandler
-	UpdateAccount UpdateAccountCmdHandler
-	DeleteAccount DeleteAccountCmdHandler
+	CreateAccount  CreateAccountCmdHandler
+	UpdateAccount  UpdateAccountCmdHandler
+	ChangePassword ChangePasswordCmdHandler
+	BanAccountById BanAccountByIdCmdHandler
+	DeleteAccount  DeleteAccountCmdHandler
 }
 
 func NewAccountCommands(
 	createAccount CreateAccountCmdHandler,
 	updateAccount UpdateAccountCmdHandler,
+	changePassword ChangePasswordCmdHandler,
+	banAccountById BanAccountByIdCmdHandler,
 	deleteAccount DeleteAccountCmdHandler,
 ) *AccountCommands {
-	return &AccountCommands{CreateAccount: createAccount, UpdateAccount: updateAccount, DeleteAccount: deleteAccount}
+	return &AccountCommands{CreateAccount: createAccount, UpdateAccount: updateAccount, ChangePassword: changePassword, BanAccountById: banAccountById, DeleteAccount: deleteAccount}
 }
 
 type CreateAccountCommand struct {
-	AccountID string    `json:"account_id" bson:"_id,omitempty"`
+	AccountID uuid.UUID `json:"account_id" bson:"_id,omitempty"`
 	PlayerID  string    `json:"player_id,omitempty" bson:"player_id,omitempty" validate:"required,max=11"`
 	Username  string    `json:"username,omitempty" bson:"username,omitempty" validate:"required,min=3,max=250"`
 	Email     string    `json:"email,omitempty" bson:"email,omitempty" validate:"required"`
@@ -30,7 +34,7 @@ type CreateAccountCommand struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty" bson:"updated_at,omitempty"`
 }
 
-func NewCreateAccountCommand(accountID, playerID, username, email, password string, isBan bool, createdAt, updatedAt time.Time) *CreateAccountCommand {
+func NewCreateAccountCommand(accountID uuid.UUID, playerID, username, email, password string, isBan bool, createdAt, updatedAt time.Time) *CreateAccountCommand {
 	return &CreateAccountCommand{
 		AccountID: accountID,
 		PlayerID:  playerID,
@@ -44,19 +48,45 @@ func NewCreateAccountCommand(accountID, playerID, username, email, password stri
 }
 
 type UpdateAccountCommand struct {
-	AccountID string    `json:"account_id" bson:"_id,omitempty"`
+	AccountID uuid.UUID `json:"account_id" bson:"_id,omitempty"`
 	Username  string    `json:"username,omitempty" bson:"username,omitempty" validate:"required,min=3,max=250"`
 	Email     string    `json:"email,omitempty" bson:"email,omitempty" validate:"required"`
 	UpdatedAt time.Time `json:"updated_at,omitempty" bson:"updated_at,omitempty"`
 }
 
-func NewUpdateAccountCommand(accountID, username, email string, updatedAt time.Time) *UpdateAccountCommand {
+func NewUpdateAccountCommand(accountID uuid.UUID, username, email string, updatedAt time.Time) *UpdateAccountCommand {
 	return &UpdateAccountCommand{
 		AccountID: accountID,
 		Username:  username,
 		Email:     email,
 		UpdatedAt: updatedAt,
 	}
+}
+
+type ChangePasswordCommand struct {
+	AccountID   uuid.UUID `json:"account_id" bson:"account_id,omitempty"`
+	OldPassword string    `json:"old_password,omitempty" bson:"old_password,omitempty" validate:"required"`
+	NewPassword string    `json:"new_password,omitempty" bson:"new_password,omitempty" validate:"required"`
+	UpdatedAt   time.Time `json:"updated_at,omitempty" bson:"updated_at,omitempty"`
+}
+
+func NewChangePasswordCommand(accountID uuid.UUID, oldPassword, newPassword string, updatedAt time.Time) *ChangePasswordCommand {
+	return &ChangePasswordCommand{
+		AccountID:   accountID,
+		OldPassword: oldPassword,
+		NewPassword: newPassword,
+		UpdatedAt:   updatedAt,
+	}
+}
+
+type BanAccountByIdCommand struct {
+	AccountID uuid.UUID `json:"account_id" bson:"account_id,omitempty"`
+	IsBan     bool      `json:"is_ban,omitempty" bson:"is_ban,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty" bson:"updated_at,omitempty"`
+}
+
+func NewBanAccountByIdCommand(accountID uuid.UUID, isBan bool, updatedAt time.Time) *BanAccountByIdCommand {
+	return &BanAccountByIdCommand{AccountID: accountID, IsBan: isBan, UpdatedAt: updatedAt}
 }
 
 type DeleteAccountCommand struct {

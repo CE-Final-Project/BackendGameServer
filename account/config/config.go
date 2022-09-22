@@ -28,9 +28,11 @@ type GRPC struct {
 }
 
 type KafkaTopics struct {
-	AccountRegistered kafka.TopicConfig
-	AccountUpdated    kafka.TopicConfig
-	AccountDeleted    kafka.TopicConfig
+	AccountRegister kafka.TopicConfig
+	AccountUpdate   kafka.TopicConfig
+	ChangePassword  kafka.TopicConfig
+	AccountBan      kafka.TopicConfig
+	AccountDelete   kafka.TopicConfig
 }
 
 func InitConfig() (*Config, error) {

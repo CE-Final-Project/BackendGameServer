@@ -3,12 +3,13 @@ package models
 import (
 	"github.com/ce-final-project/backend_game_server/account/proto"
 	"github.com/ce-final-project/backend_game_server/pkg/utils"
+	uuid "github.com/satori/go.uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
 
 type Account struct {
-	AccountID      string    `json:"account_id" bson:"_id,omitempty"`
+	AccountID      uuid.UUID `json:"account_id" bson:"_id,omitempty"`
 	PlayerID       string    `json:"player_id,omitempty" bson:"player_id,omitempty" validate:"required,max=11"`
 	Username       string    `json:"username,omitempty" bson:"username,omitempty" validate:"required,min=3,max=250"`
 	Email          string    `json:"email,omitempty" bson:"email,omitempty" validate:"required"`
@@ -41,7 +42,7 @@ func NewAccountListWithPagination(accounts []*Account, count int64, pagination *
 
 func AccountToGrpcMessage(account *Account) *accountService.Account {
 	return &accountService.Account{
-		AccountID: account.AccountID,
+		AccountID: account.AccountID.String(),
 		PlayerID:  account.PlayerID,
 		Username:  account.Username,
 		Email:     account.Email,

@@ -9,8 +9,9 @@ import "account_message.proto";
 service accountService {
   rpc CreateAccount(CreateAccountReq) returns (CreateAccountRes);
   rpc UpdateAccount(UpdateAccountReq) returns (UpdateAccountRes);
-  rpc GetAccountById(GetAccountByIdReq) returns (Account);
-  rpc ChangePassword(ChangePasswordReq) returns (UpdateAccountRes);
+  rpc GetAccountById(GetAccountByIdReq) returns (GetAccountByIdRes);
+  rpc ChangePassword(ChangePasswordReq) returns (ChangePasswordRes);
+  rpc BanAccountById(BanAccountByIdReq) returns (BanAccountByIdRes);
   rpc SearchAccount(SearchReq) returns (SearchRes);
   rpc DeleteAccountById(DeleteAccountByIdReq) returns (DeleteAccountByIdRes);
 }

@@ -19,6 +19,14 @@ kafkaTopics:
     topicName: account_update
     partitions: 10
     replicationFactor: 1
+  changePassword:
+    topicName: account_change_password
+    partitions: 10
+    replicationFactor: 1
+  accountBan:
+    topicName: account_ban
+    partitions: 10
+    replicationFactor: 1
   accountRegistered:
     topicName: account_registered
     partitions: 10

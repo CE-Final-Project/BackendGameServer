@@ -9,29 +9,28 @@ import (
 	"github.com/opentracing/opentracing-go"
 )
 
-type UpdateAccountCmdHandler interface {
-	Handle(ctx context.Context, command *UpdateAccountCommand) error
+type BanAccountByIdCmdHandler interface {
+	Handle(ctx context.Context, command *BanAccountByIdCommand) error
 }
 
-type updateAccountHandler struct {
+type banAccountByIdHandler struct {
 	log          logger.Logger
 	cfg          *config.Config
 	postgresRepo repository.Repository
 	redisRepo    repository.CacheRepository
 }
 
-func NewUpdateAccountCmdHandler(log logger.Logger, cfg *config.Config, postgresRepo repository.Repository, redisRepo repository.CacheRepository) *updateAccountHandler {
-	return &updateAccountHandler{log: log, cfg: cfg, postgresRepo: postgresRepo, redisRepo: redisRepo}
+func NewBanAccountByIdCmdHandler(log logger.Logger, cfg *config.Config, postgresRepo repository.Repository, redisRepo repository.CacheRepository) *banAccountByIdHandler {
+	return &banAccountByIdHandler{log: log, cfg: cfg, postgresRepo: postgresRepo, redisRepo: redisRepo}
 }
 
-func (u *updateAccountHandler) Handle(ctx context.Context, command *UpdateAccountCommand) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "updateAccountHandler.Handle")
+func (u *banAccountByIdHandler) Handle(ctx context.Context, command *BanAccountByIdCommand) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "banAccountByIdHandler.Handle")
 	defer span.Finish()
 
 	account := &models.Account{
 		AccountID: command.AccountID,
-		Username:  command.Username,
-		Email:     command.Email,
+		IsBan:     command.IsBan,
 		UpdatedAt: command.UpdatedAt,
 	}
 

@@ -5,7 +5,7 @@ import (
 	"github.com/ce-final-project/backend_game_server/account/config"
 	accountKafka "github.com/ce-final-project/backend_game_server/account/internal/account/delivery/kafka"
 	"github.com/ce-final-project/backend_game_server/account/internal/account/repository"
-	"github.com/ce-final-project/backend_game_server/account/internal/service"
+	"github.com/ce-final-project/backend_game_server/account/internal/account/service"
 	kafkaClient "github.com/ce-final-project/backend_game_server/pkg/kafka"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/ce-final-project/backend_game_server/pkg/postgres"
@@ -62,7 +62,7 @@ func (s *server) Run() error {
 	}
 	redisRepo := repository.NewAccountCacheRepository(s.log, s.redisClient)
 
-	s.as = service.NewAccountService(s.log, pgRepo, redisRepo)
+	s.as = service.NewAccountService(s.log, s.cfg, pgRepo, redisRepo)
 
 	accountMessageProcessor := accountKafka.NewAccountMessageProcessor(s.log, s.cfg, s.v, s.as)
 

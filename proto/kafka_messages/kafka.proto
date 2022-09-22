@@ -18,8 +18,17 @@ message UpdateAccount {
   string AccountID = 1;
   string Username = 2;
   string Email = 3;
-  string Password = 4;
-  bool IsBan = 5;
+}
+
+message ChangePassword {
+  string AccountID = 1;
+  string OldPassword = 2;
+  string NewPassword = 3;
+}
+
+message BanAccountById {
+  string AccountID = 1;
+  bool IsBan = 2;
 }
 
 message DeleteAccount{
@@ -37,12 +46,11 @@ message Account {
 }
 
 message AccountRegistered{
-  string AccountID = 1;
-  string PlayerID = 2;
+  Account account = 1;
 }
 
 message AccountUpdated{
-  string AccountID = 1;
+  Account account = 1;
 }
 
 message AccountDeleted {

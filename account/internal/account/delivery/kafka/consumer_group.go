@@ -3,7 +3,7 @@ package kafka
 import (
 	"context"
 	"github.com/ce-final-project/backend_game_server/account/config"
-	"github.com/ce-final-project/backend_game_server/account/internal/service"
+	"github.com/ce-final-project/backend_game_server/account/internal/account/service"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/go-playground/validator"
 	"github.com/segmentio/kafka-go"
@@ -45,11 +45,15 @@ func (s *accountMessageProcessor) ProcessMessages(ctx context.Context, r *kafka.
 
 		switch m.Topic {
 		case s.cfg.KafkaTopics.AccountRegister.TopicName:
-			s.processAccountRegisterd(ctx, r, m)
+			s.processAccountRegister(ctx, r, m)
 		case s.cfg.KafkaTopics.AccountUpdate.TopicName:
-			s.processAccountUpdated(ctx, r, m)
+			s.processAccountUpdate(ctx, r, m)
+		case s.cfg.KafkaTopics.ChangePassword.TopicName:
+			s.processChangePassword(ctx, r, m)
+		case s.cfg.KafkaTopics.AccountBan.TopicName:
+			s.processBanAccountById(ctx, r, m)
 		case s.cfg.KafkaTopics.AccountDelete.TopicName:
-			s.processAccountDeleted(ctx, r, m)
+			s.processAccountDelete(ctx, r, m)
 		}
 	}
 }

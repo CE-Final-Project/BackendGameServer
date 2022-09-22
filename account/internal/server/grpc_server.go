@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/ce-final-project/backend_game_server/account/internal/account/service"
+	authGrpc "github.com/ce-final-project/backend_game_server/account/internal/account/delivery/grpc"
 	authService "github.com/ce-final-project/backend_game_server/account/proto"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
@@ -33,7 +33,7 @@ func (s *server) NewAuthGrpcServer() (func() error, *grpc.Server, error) {
 		}),
 	)
 
-	grpcService := service.NewAccountService(s.log, s.cfg, s., s.as)
+	grpcService := authGrpc.NewGrpcService(s.log, s.cfg, s.v, s.as)
 	authService.RegisterAccountServiceServer(grpcServer, grpcService)
 
 	if s.cfg.GRPC.Development {
@@ -41,7 +41,7 @@ func (s *server) NewAuthGrpcServer() (func() error, *grpc.Server, error) {
 	}
 
 	go func() {
-		s.log.Infof("auth gRPC server is listening on port: %s", s.cfg.GRPC.Port)
+		s.log.Infof("Account gRPC server is listening on port: %s", s.cfg.GRPC.Port)
 		s.log.Fatal(grpcServer.Serve(l))
 	}()
 

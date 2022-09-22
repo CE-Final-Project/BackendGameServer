@@ -12,22 +12,13 @@ import (
 	"time"
 )
 
-const (
-	retryAttempts = 3
-	retryDelay    = 300 * time.Millisecond
-)
+func (s *accountMessageProcessor) processBanAccountById(ctx context.Context, r *kafka.Reader, m kafka.Message) {
 
-var (
-	retryOptions = []retry.Option{retry.Attempts(retryAttempts), retry.Delay(retryDelay), retry.DelayType(retry.BackOffDelay)}
-)
-
-func (s *accountMessageProcessor) processAccountRegister(ctx context.Context, r *kafka.Reader, m kafka.Message) {
-
-	ctx, span := tracing.StartKafkaConsumerTracerSpan(ctx, m.Headers, "accountMessageProcessor.processAccountRegister")
+	ctx, span := tracing.StartKafkaConsumerTracerSpan(ctx, m.Headers, "accountMessageProcessor.processBanAccountById")
 	defer span.Finish()
 
-	var msg kafkaMessages.RegisterAccount
-	if err := proto.Unmarshal(m.Value, &msg); err != nil {
+	msg := &kafkaMessages.BanAccountById{}
+	if err := proto.Unmarshal(m.Value, msg); err != nil {
 		s.log.WarnMsg("proto.Unmarshal", err)
 		s.commitErrMessage(ctx, r, m)
 		return
@@ -40,7 +31,7 @@ func (s *accountMessageProcessor) processAccountRegister(ctx context.Context, r 
 		return
 	}
 
-	command := commands.NewCreateAccountCommand(accUUID, msg.GetPlayerID(), msg.GetUsername(), msg.GetEmail(), msg.GetPassword(), false, time.Now(), time.Now())
+	command := commands.NewBanAccountByIdCommand(accUUID, msg.GetIsBan(), time.Now())
 	if err := s.v.StructCtx(ctx, command); err != nil {
 		s.log.WarnMsg("validate", err)
 		s.commitErrMessage(ctx, r, m)
@@ -48,9 +39,9 @@ func (s *accountMessageProcessor) processAccountRegister(ctx context.Context, r 
 	}
 
 	if err := retry.Do(func() error {
-		return s.as.Commands.CreateAccount.Handle(ctx, command)
+		return s.as.Commands.BanAccountById.Handle(ctx, command)
 	}, append(retryOptions, retry.Context(ctx))...); err != nil {
-		s.log.WarnMsg("CreateAccount.Handle", err)
+		s.log.WarnMsg("BanAccountById.Handle", err)
 		return
 	}
 

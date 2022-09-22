@@ -51,6 +51,8 @@ func (a *postgresRepository) UpdateAccount(ctx context.Context, account *models.
 		updateAccountQuery,
 		&account.Username,
 		&account.Email,
+		&account.PasswordHashed,
+		&account.IsBan,
 		&account.AccountID,
 	).Scan(&prod.AccountID, &prod.PlayerID, &prod.Username, &prod.Email, &prod.PasswordHashed, &prod.IsBan, &prod.CreatedAt, &prod.UpdatedAt); err != nil {
 		return nil, errors.Wrap(err, "Scan")

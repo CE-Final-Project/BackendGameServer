@@ -34,8 +34,22 @@ const (
 	updateAccountQuery = `UPDATE accounts a SET 
                       username=COALESCE(NULLIF($1, ''), username), 
                       email=COALESCE(NULLIF($2, ''), email), 
+                      password_hashed=COALESCE(NULLIF($3, ''), password_hashed), 
+                      is_ban=COALESCE(NULLIF($4, is_ban), is_ban),
                       updated_at = now()
-                      WHERE account_id=$3
+                      WHERE account_id=$5
+                      RETURNING account_id, player_id, username, email, password_hashed, is_ban, created_at, updated_at`
+
+	changePasswordQuery = `UPDATE accounts a SET 
+                      password_hashed=COALESCE(NULLIF($1, ''), password_hashed), 
+                      updated_at = now()
+                      WHERE account_id=$2
+                      RETURNING account_id, player_id, username, email, password_hashed, is_ban, created_at, updated_at`
+
+	BanAccountByIdQuery = `UPDATE accounts a SET 
+                      is_ban=COALESCE(NULLIF($1, is_ban), is_ban),
+                      updated_at = now()
+                      WHERE account_id=$2
                       RETURNING account_id, player_id, username, email, password_hashed, is_ban, created_at, updated_at`
 
 	searchAccountQuery = `SELECT count(*) over() as total, a.account_id, a.player_id, a.username, a.email, a.password_hashed, a.is_ban, a.created_at, a.updated_at

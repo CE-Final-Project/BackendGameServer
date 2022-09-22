@@ -39,7 +39,13 @@ func (s *grpcService) CreateAccount(ctx context.Context, req *accountService.Cre
 	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.CreateAccount")
 	defer span.Finish()
 
-	command := commands.NewCreateAccountCommand(req.GetAccountID(), req.GetPlayerID(), req.GetUsername(), req.GetEmail(), req.GetPassword(), false, time.Now(), time.Now())
+	accUUID, err := uuid.FromString(req.GetAccountID())
+	if err != nil {
+		s.log.WarnMsg("uuid.FromString", err)
+		return nil, s.errResponse(codes.InvalidArgument, err)
+	}
+
+	command := commands.NewCreateAccountCommand(accUUID, req.GetPlayerID(), req.GetUsername(), req.GetEmail(), req.GetPassword(), false, time.Now(), time.Now())
 	if err := s.v.StructCtx(ctx, command); err != nil {
 		s.log.WarnMsg("validate", err)
 		return nil, s.errResponse(codes.InvalidArgument, err)
@@ -58,7 +64,13 @@ func (s *grpcService) UpdateAccount(ctx context.Context, req *accountService.Upd
 	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.UpdateAccount")
 	defer span.Finish()
 
-	command := commands.NewUpdateAccountCommand(req.GetAccountID(), req.GetUsername(), req.GetEmail(), time.Now())
+	accUUID, err := uuid.FromString(req.GetAccountID())
+	if err != nil {
+		s.log.WarnMsg("uuid.FromString", err)
+		return nil, s.errResponse(codes.InvalidArgument, err)
+	}
+
+	command := commands.NewUpdateAccountCommand(accUUID, req.GetUsername(), req.GetEmail(), time.Now())
 	if err := s.v.StructCtx(ctx, command); err != nil {
 		s.log.WarnMsg("validate", err)
 		return nil, s.errResponse(codes.InvalidArgument, err)
@@ -72,18 +84,66 @@ func (s *grpcService) UpdateAccount(ctx context.Context, req *accountService.Upd
 	return &accountService.UpdateAccountRes{AccountID: req.GetAccountID()}, nil
 }
 
-func (s *grpcService) GetAccountById(ctx context.Context, req *accountService.GetAccountByIdReq) (*accountService.GetAccountByIdRes, error) {
-
-	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.GetAccountById")
+func (s *grpcService) ChangePassword(ctx context.Context, req *accountService.ChangePasswordReq) (*accountService.ChangePasswordRes, error) {
+	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.ChangePassword")
 	defer span.Finish()
 
-	accountUUID, err := uuid.FromString(req.GetAccountID())
+	accUUID, err := uuid.FromString(req.GetAccountID())
 	if err != nil {
 		s.log.WarnMsg("uuid.FromString", err)
 		return nil, s.errResponse(codes.InvalidArgument, err)
 	}
 
-	query := queries.NewGetAccountByIdQuery(accountUUID)
+	command := commands.NewChangePasswordCommand(accUUID, req.GetOldPassword(), req.GetNewPassword(), time.Now())
+	if err := s.v.StructCtx(ctx, command); err != nil {
+		s.log.WarnMsg("validate", err)
+		return nil, s.errResponse(codes.InvalidArgument, err)
+	}
+
+	if err := s.as.Commands.ChangePassword.Handle(ctx, command); err != nil {
+		s.log.WarnMsg("ChangePassword.Handle", err)
+		return nil, s.errResponse(codes.InvalidArgument, err)
+	}
+
+	return &accountService.ChangePasswordRes{AccountID: req.GetAccountID()}, nil
+}
+
+func (s *grpcService) BanAccountById(ctx context.Context, req *accountService.BanAccountByIdReq) (*accountService.BanAccountByIdRes, error) {
+	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.BanAccountById")
+	defer span.Finish()
+
+	accUUID, err := uuid.FromString(req.GetAccountID())
+	if err != nil {
+		s.log.WarnMsg("uuid.FromString", err)
+		return nil, s.errResponse(codes.InvalidArgument, err)
+	}
+
+	command := commands.NewBanAccountByIdCommand(accUUID, req.GetIsBan(), time.Now())
+	if err := s.v.StructCtx(ctx, command); err != nil {
+		s.log.WarnMsg("validate", err)
+		return nil, s.errResponse(codes.InvalidArgument, err)
+	}
+
+	if err := s.as.Commands.BanAccountById.Handle(ctx, command); err != nil {
+		s.log.WarnMsg("BanAccountById.Handle", err)
+		return nil, s.errResponse(codes.InvalidArgument, err)
+	}
+
+	return &accountService.BanAccountByIdRes{AccountID: req.GetAccountID()}, nil
+}
+
+func (s *grpcService) GetAccountById(ctx context.Context, req *accountService.GetAccountByIdReq) (*accountService.GetAccountByIdRes, error) {
+
+	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.GetAccountById")
+	defer span.Finish()
+
+	accUUID, err := uuid.FromString(req.GetAccountID())
+	if err != nil {
+		s.log.WarnMsg("uuid.FromString", err)
+		return nil, s.errResponse(codes.InvalidArgument, err)
+	}
+
+	query := queries.NewGetAccountByIdQuery(accUUID)
 	if err := s.v.StructCtx(ctx, query); err != nil {
 		s.log.WarnMsg("validate", err)
 		return nil, s.errResponse(codes.InvalidArgument, err)
@@ -115,18 +175,18 @@ func (s *grpcService) SearchAccount(ctx context.Context, req *accountService.Sea
 	return models.AccountListToGrpc(accountsList), nil
 }
 
-func (s *grpcService) DeleteAccountByID(ctx context.Context, req *accountService.DeleteAccountByIdReq) (*accountService.DeleteAccountByIdRes, error) {
+func (s *grpcService) DeleteAccountById(ctx context.Context, req *accountService.DeleteAccountByIdReq) (*accountService.DeleteAccountByIdRes, error) {
 
 	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.DeleteAccountByID")
 	defer span.Finish()
 
-	accountUUID, err := uuid.FromString(req.GetAccountID())
+	accUUID, err := uuid.FromString(req.GetAccountID())
 	if err != nil {
 		s.log.WarnMsg("uuid.FromString", err)
 		return nil, s.errResponse(codes.InvalidArgument, err)
 	}
 
-	if err := s.as.Commands.DeleteAccount.Handle(ctx, commands.NewDeleteAccountCommand(accountUUID)); err != nil {
+	if err := s.as.Commands.DeleteAccount.Handle(ctx, commands.NewDeleteAccountCommand(accUUID)); err != nil {
 		s.log.WarnMsg("DeleteAccount.Handle", err)
 		return nil, s.errResponse(codes.Internal, err)
 	}
