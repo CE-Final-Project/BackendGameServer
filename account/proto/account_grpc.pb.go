@@ -25,6 +25,7 @@ type AccountServiceClient interface {
 	CreateAccount(ctx context.Context, in *CreateAccountReq, opts ...grpc.CallOption) (*CreateAccountRes, error)
 	UpdateAccount(ctx context.Context, in *UpdateAccountReq, opts ...grpc.CallOption) (*UpdateAccountRes, error)
 	GetAccountById(ctx context.Context, in *GetAccountByIdReq, opts ...grpc.CallOption) (*GetAccountByIdRes, error)
+	GetAccountByUsername(ctx context.Context, in *GetAccountByUsernameReq, opts ...grpc.CallOption) (*GetAccountByUsernameRes, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordReq, opts ...grpc.CallOption) (*ChangePasswordRes, error)
 	BanAccountById(ctx context.Context, in *BanAccountByIdReq, opts ...grpc.CallOption) (*BanAccountByIdRes, error)
 	SearchAccount(ctx context.Context, in *SearchReq, opts ...grpc.CallOption) (*SearchRes, error)
@@ -60,6 +61,15 @@ func (c *accountServiceClient) UpdateAccount(ctx context.Context, in *UpdateAcco
 func (c *accountServiceClient) GetAccountById(ctx context.Context, in *GetAccountByIdReq, opts ...grpc.CallOption) (*GetAccountByIdRes, error) {
 	out := new(GetAccountByIdRes)
 	err := c.cc.Invoke(ctx, "/account.accountService/GetAccountById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) GetAccountByUsername(ctx context.Context, in *GetAccountByUsernameReq, opts ...grpc.CallOption) (*GetAccountByUsernameRes, error) {
+	out := new(GetAccountByUsernameRes)
+	err := c.cc.Invoke(ctx, "/account.accountService/GetAccountByUsername", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -109,6 +119,7 @@ type AccountServiceServer interface {
 	CreateAccount(context.Context, *CreateAccountReq) (*CreateAccountRes, error)
 	UpdateAccount(context.Context, *UpdateAccountReq) (*UpdateAccountRes, error)
 	GetAccountById(context.Context, *GetAccountByIdReq) (*GetAccountByIdRes, error)
+	GetAccountByUsername(context.Context, *GetAccountByUsernameReq) (*GetAccountByUsernameRes, error)
 	ChangePassword(context.Context, *ChangePasswordReq) (*ChangePasswordRes, error)
 	BanAccountById(context.Context, *BanAccountByIdReq) (*BanAccountByIdRes, error)
 	SearchAccount(context.Context, *SearchReq) (*SearchRes, error)
@@ -127,6 +138,9 @@ func (UnimplementedAccountServiceServer) UpdateAccount(context.Context, *UpdateA
 }
 func (UnimplementedAccountServiceServer) GetAccountById(context.Context, *GetAccountByIdReq) (*GetAccountByIdRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountById not implemented")
+}
+func (UnimplementedAccountServiceServer) GetAccountByUsername(context.Context, *GetAccountByUsernameReq) (*GetAccountByUsernameRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccountByUsername not implemented")
 }
 func (UnimplementedAccountServiceServer) ChangePassword(context.Context, *ChangePasswordReq) (*ChangePasswordRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
@@ -202,6 +216,24 @@ func _AccountService_GetAccountById_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AccountServiceServer).GetAccountById(ctx, req.(*GetAccountByIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_GetAccountByUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAccountByUsernameReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).GetAccountByUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/account.accountService/GetAccountByUsername",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).GetAccountByUsername(ctx, req.(*GetAccountByUsernameReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -296,6 +328,10 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccountById",
 			Handler:    _AccountService_GetAccountById_Handler,
+		},
+		{
+			MethodName: "GetAccountByUsername",
+			Handler:    _AccountService_GetAccountByUsername_Handler,
 		},
 		{
 			MethodName: "ChangePassword",

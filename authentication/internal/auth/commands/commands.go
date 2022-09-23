@@ -20,10 +20,12 @@ type RegisterCommand struct {
 	Password  string    `json:"password,omitempty" validate:"required"`
 }
 
-func NewRegisterCommand(username, email, password string) *RegisterCommand {
+func NewRegisterCommand(accountID uuid.UUID, playerID, username, email, password string) *RegisterCommand {
 	return &RegisterCommand{
-		Username: username,
-		Email:    email,
-		Password: password,
+		AccountID: accountID,
+		PlayerID:  playerID,
+		Username:  username,
+		Email:     email,
+		Password:  password,
 	}
 }

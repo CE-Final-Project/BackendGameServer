@@ -158,6 +158,26 @@ func (s *grpcService) GetAccountById(ctx context.Context, req *accountService.Ge
 	return &accountService.GetAccountByIdRes{Account: models.AccountToGrpcMessage(account)}, nil
 }
 
+func (s *grpcService) GetAccountByUsername(ctx context.Context, req *accountService.GetAccountByUsernameReq) (*accountService.GetAccountByUsernameRes, error) {
+
+	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.GetAccountById")
+	defer span.Finish()
+
+	query := queries.NewGetAccountByUsernameQuery(req.GetUsername())
+	if err := s.v.StructCtx(ctx, query); err != nil {
+		s.log.WarnMsg("validate", err)
+		return nil, s.errResponse(codes.InvalidArgument, err)
+	}
+
+	account, err := s.as.Queries.GetAccountByUsername.Handle(ctx, query)
+	if err != nil {
+		s.log.WarnMsg("GetAccountById.Handle", err)
+		return nil, s.errResponse(codes.Internal, err)
+	}
+
+	return &accountService.GetAccountByUsernameRes{Account: models.AccountToGrpcMessage(account)}, nil
+}
+
 func (s *grpcService) SearchAccount(ctx context.Context, req *accountService.SearchReq) (*accountService.SearchRes, error) {
 
 	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.SearchAccount")

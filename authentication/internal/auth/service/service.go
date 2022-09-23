@@ -15,6 +15,15 @@ type AuthService struct {
 }
 
 func NewAuthService(log logger.Logger, cfg *config.Config, kafkaProducer kafkaClient.Producer, asClient accountService.AccountServiceClient) *AuthService {
-	//TODO: Implemented Me
-	panic("Implement Me")
+
+	registerCommandHandler := commands.NewRegisterAccountHandler(log, cfg, kafkaProducer)
+
+	getAccountByUsernameHandler := queries.NewGetAccountByUsernameHandler(log, cfg, asClient)
+
+	authCommands := commands.NewAuthCommands(registerCommandHandler)
+	authQueries := queries.NewAuthQueries(getAccountByUsernameHandler)
+	return &AuthService{
+		Commands: authCommands,
+		Queries:  authQueries,
+	}
 }

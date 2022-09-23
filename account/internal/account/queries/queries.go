@@ -6,12 +6,13 @@ import (
 )
 
 type AccountQueries struct {
-	GetAccountById GetAccountByIdHandler
-	SearchAccount  SearchAccountHandler
+	GetAccountById       GetAccountByIdHandler
+	GetAccountByUsername GetAccountByUsernameHandler
+	SearchAccount        SearchAccountHandler
 }
 
-func NewAccountQueries(getAccountById GetAccountByIdHandler, searchAccount SearchAccountHandler) *AccountQueries {
-	return &AccountQueries{GetAccountById: getAccountById, SearchAccount: searchAccount}
+func NewAccountQueries(getAccountById GetAccountByIdHandler, getAccountByUsername GetAccountByUsernameHandler, searchAccount SearchAccountHandler) *AccountQueries {
+	return &AccountQueries{GetAccountById: getAccountById, GetAccountByUsername: getAccountByUsername, SearchAccount: searchAccount}
 }
 
 type GetAccountByIdQuery struct {
@@ -20,6 +21,14 @@ type GetAccountByIdQuery struct {
 
 func NewGetAccountByIdQuery(accountID uuid.UUID) *GetAccountByIdQuery {
 	return &GetAccountByIdQuery{AccountID: accountID}
+}
+
+type GetAccountByUsernameQuery struct {
+	Username string `json:"username" validate:"required"`
+}
+
+func NewGetAccountByUsernameQuery(username string) *GetAccountByUsernameQuery {
+	return &GetAccountByUsernameQuery{Username: username}
 }
 
 type SearchAccountQuery struct {

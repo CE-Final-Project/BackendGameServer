@@ -27,10 +27,11 @@ func NewAccountService(
 	banAccountByIdCmdHandler := commands.NewBanAccountByIdCmdHandler(log, cfg, postgresRepo, redisRepo)
 
 	getAccountByIdHandler := queries.NewGetAccountByIdHandler(log, cfg, postgresRepo, redisRepo)
+	getAccountByUsernameHandler := queries.NewGetAccountByUsernameHandler(log, cfg, postgresRepo, redisRepo)
 	searchAccountHandler := queries.NewSearchAccountHandler(log, cfg, postgresRepo, redisRepo)
 
 	accountCommands := commands.NewAccountCommands(createAccountHandler, updateAccountCmdHandler, changePasswordCmdHandler, banAccountByIdCmdHandler, deleteAccountCmdHandler)
-	accountQueries := queries.NewAccountQueries(getAccountByIdHandler, searchAccountHandler)
+	accountQueries := queries.NewAccountQueries(getAccountByIdHandler, getAccountByUsernameHandler, searchAccountHandler)
 
 	return &AccountService{Commands: accountCommands, Queries: accountQueries}
 }

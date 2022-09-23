@@ -10,6 +10,7 @@ service accountService {
   rpc CreateAccount(CreateAccountReq) returns (CreateAccountRes);
   rpc UpdateAccount(UpdateAccountReq) returns (UpdateAccountRes);
   rpc GetAccountById(GetAccountByIdReq) returns (GetAccountByIdRes);
+  rpc GetAccountByUsername(GetAccountByUsernameReq) returns (GetAccountByUsernameRes);
   rpc ChangePassword(ChangePasswordReq) returns (ChangePasswordRes);
   rpc BanAccountById(BanAccountByIdReq) returns (BanAccountByIdRes);
   rpc SearchAccount(SearchReq) returns (SearchRes);

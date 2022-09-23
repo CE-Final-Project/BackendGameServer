@@ -19,7 +19,9 @@ type Repository interface {
 
 type CacheRepository interface {
 	PutAccount(ctx context.Context, key string, account *models.Account)
+	PutKeyReference(ctx context.Context, key string, targetKey string)
 	GetAccount(ctx context.Context, key string) (*models.Account, error)
+	GetAccountReference(ctx context.Context, key string) (*models.Account, error)
 	DelAccount(ctx context.Context, key string)
 	DelAllAccounts(ctx context.Context)
 }

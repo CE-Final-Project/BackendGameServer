@@ -12,8 +12,11 @@ require (
 	github.com/ce-final-project/backend_game_server/authentication v0.0.0-00010101000000-000000000000
 	github.com/ce-final-project/backend_game_server/pkg v0.0.0-00010101000000-000000000000
 	github.com/ce-final-project/backend_game_server/proto v0.0.0-00010101000000-000000000000
+	github.com/ce-final-project/backend_rest_api v0.0.0-20220908130108-d0580ac0c5e1
 	github.com/go-playground/validator v9.31.0+incompatible
+	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/labstack/echo/v4 v4.9.0
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/segmentio/kafka-go v0.4.34
@@ -28,7 +31,6 @@ require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
-	github.com/ce-final-project/backend_rest_api v0.0.0-20220908130108-d0580ac0c5e1 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
@@ -57,6 +59,8 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a // indirect
+	github.com/uber/jaeger-client-go v2.30.0+incompatible // indirect
+	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	go.uber.org/atomic v1.7.0 // indirect

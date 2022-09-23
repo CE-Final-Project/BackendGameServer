@@ -42,13 +42,14 @@ func NewAccountListWithPagination(accounts []*Account, count int64, pagination *
 
 func AccountToGrpcMessage(account *Account) *accountService.Account {
 	return &accountService.Account{
-		AccountID: account.AccountID.String(),
-		PlayerID:  account.PlayerID,
-		Username:  account.Username,
-		Email:     account.Email,
-		IsBan:     account.IsBan,
-		CreatedAt: timestamppb.New(account.CreatedAt),
-		UpdatedAt: timestamppb.New(account.UpdatedAt),
+		AccountID:      account.AccountID.String(),
+		PlayerID:       account.PlayerID,
+		Username:       account.Username,
+		Email:          account.Email,
+		IsBan:          account.IsBan,
+		PasswordHashed: account.PasswordHashed,
+		CreatedAt:      timestamppb.New(account.CreatedAt),
+		UpdatedAt:      timestamppb.New(account.UpdatedAt),
 	}
 }
 

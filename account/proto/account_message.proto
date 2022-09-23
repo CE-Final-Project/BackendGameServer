@@ -12,8 +12,9 @@ message Account{
   string Username = 3;
   string Email = 4;
   bool IsBan = 6;
-  google.protobuf.Timestamp CreatedAt = 7;
-  google.protobuf.Timestamp UpdatedAt = 8;
+  string PasswordHashed = 7;
+  google.protobuf.Timestamp CreatedAt = 8;
+  google.protobuf.Timestamp UpdatedAt = 9;
 }
 
 message CreateAccountReq{
@@ -63,6 +64,14 @@ message GetAccountByIdReq{
 }
 
 message GetAccountByIdRes {
+  Account Account = 1;
+}
+
+message GetAccountByUsernameReq{
+  string Username = 1;
+}
+
+message GetAccountByUsernameRes{
   Account Account = 1;
 }
 

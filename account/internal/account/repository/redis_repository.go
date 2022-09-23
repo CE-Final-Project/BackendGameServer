@@ -39,6 +39,37 @@ func (a *accountCacheRepository) PutAccount(ctx context.Context, key string, acc
 	a.log.Debugf("HSetNX prefix: %s, key: %s", a.getRedisAccountPrefixKey(), key)
 }
 
+func (a *accountCacheRepository) PutKeyReference(ctx context.Context, key string, targetKey string) {
+	if err := a.redisClient.HSetNX(ctx, a.getRedisAccountPrefixKey(), key, []byte(targetKey)).Err(); err != nil {
+		a.log.WarnMsg("redisClient.HSetNX", err)
+		return
+	}
+	a.log.Debugf("HSetNX prefix: %s, key: %s", a.getRedisAccountPrefixKey(), key)
+}
+
+func (a *accountCacheRepository) GetAccountReference(ctx context.Context, key string) (*models.Account, error) {
+	accountIDBytes, err := a.redisClient.HGet(ctx, a.getRedisAccountPrefixKey(), key).Bytes()
+	if err != nil {
+		if err != redis.Nil {
+			a.log.WarnMsg("redisClient.HGet", err)
+		}
+		return nil, errors.Wrap(err, "redisClient.HGet")
+	}
+	accountBytes, err := a.redisClient.HGet(ctx, a.getRedisAccountPrefixKey(), string(accountIDBytes)).Bytes()
+	if err != nil {
+		if err != redis.Nil {
+			a.log.WarnMsg("redisClient.HGet", err)
+		}
+		return nil, errors.Wrap(err, "redisClient.HGet")
+	}
+	var account models.Account
+	if err := json.Unmarshal(accountBytes, &account); err != nil {
+		return nil, err
+	}
+	a.log.Debugf("HGet prefix: %s, key: %s", a.getRedisAccountPrefixKey(), key)
+	return &account, nil
+}
+
 func (a *accountCacheRepository) GetAccount(ctx context.Context, key string) (*models.Account, error) {
 	accountBytes, err := a.redisClient.HGet(ctx, a.getRedisAccountPrefixKey(), key).Bytes()
 	if err != nil {

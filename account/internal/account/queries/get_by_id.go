@@ -28,15 +28,15 @@ func (q *getAccountByIdHandler) Handle(ctx context.Context, query *GetAccountByI
 	span, ctx := opentracing.StartSpanFromContext(ctx, "getAccountByIdHandler.Handle")
 	defer span.Finish()
 
-	if product, err := q.redisRepo.GetAccount(ctx, query.AccountID.String()); err == nil && product != nil {
-		return product, nil
+	if account, err := q.redisRepo.GetAccount(ctx, query.AccountID.String()); err == nil && account != nil {
+		return account, nil
 	}
 
-	product, err := q.postgresRepo.GetAccountById(ctx, query.AccountID)
+	account, err := q.postgresRepo.GetAccountById(ctx, query.AccountID)
 	if err != nil {
 		return nil, err
 	}
 
-	q.redisRepo.PutAccount(ctx, product.AccountID, product)
-	return product, nil
+	q.redisRepo.PutAccount(ctx, account.AccountID.String(), account)
+	return account, nil
 }
