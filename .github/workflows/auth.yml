@@ -2,6 +2,15 @@ name: "auth"
 
 on:
   push:
+    branches:
+      - main
+    paths:
+      - "authentication/**"
+      - "pkg/**"
+      - ".github/workflows/auth.yml"
+  pull_request:
+    branches:
+      - main
     paths:
       - "authentication/**"
       - "pkg/**"
