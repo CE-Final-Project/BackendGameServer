@@ -1,4 +1,4 @@
-name: "account"
+name: "account-dev"
 
 on:
   push:
