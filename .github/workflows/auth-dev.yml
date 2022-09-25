@@ -55,7 +55,8 @@ jobs:
           context: .
           file: ./Docker/auth.Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
+          args: "--platform linux/amd64,linux/arm64"
           push: true
-          tags: https://ghcr.io/CE-Final-Project/dev-backend-game-server-auth_service:latest
-          cache-from: type=registry,ref=https://ghcr.io/CE-Final-Project/dev-backend-game-server-auth_service:buildcache
-          cache-to: type=registry,ref=https://ghcr.io/CE-Final-Project/dev-backend-game-server-auth_service:buildcache,mode=max
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/dev-backend-game-server-auth_service:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/dev-backend-game-server-auth_service:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/dev-backend-game-server-auth_service:buildcache,mode=max
