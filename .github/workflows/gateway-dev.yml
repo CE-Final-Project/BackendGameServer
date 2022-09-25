@@ -57,7 +57,6 @@ jobs:
           context: .
           file: ./Docker/gateway.Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
-          args: "--platform linux/amd64,linux/arm64"
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/dev-backend-game-server-gateway_service:latest
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/dev-backend-game-server-gateway_service:buildcache
