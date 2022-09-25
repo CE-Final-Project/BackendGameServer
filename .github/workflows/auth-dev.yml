@@ -1,20 +1,20 @@
-name: "gateway"
+name: "auth"
 
 on:
   push:
     branches:
-      - main
+      - develop
     paths:
-      - "gateway/**"
+      - "authentication/**"
       - "pkg/**"
-      - ".github/workflows/gateway.yml"
+      - ".github/workflows/auth.yml"
   pull_request:
     branches:
-      - main
+      - develop
     paths:
-      - "gateway/**"
+      - "authentication/**"
       - "pkg/**"
-      - ".github/workflows/gateway.yml"
+      - ".github/workflows/auth.yml"
 
 jobs:
   test:
@@ -25,7 +25,7 @@ jobs:
       # run tests for route
       - name: Run tests
         run: |-
-          cd gateway
+          cd authentication
           go test ./...
   build_and_push:
     name: "Build Docker image and Push to Registry"
@@ -53,9 +53,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./Docker/gateway.Dockerfile
+          file: ./Docker/auth.Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:buildcache,mode=max
+          tags: https://ghcr.io/CE-Final-Project/dev-backend-game-server-auth_service:latest
+          cache-from: type=registry,ref=https://ghcr.io/CE-Final-Project/dev-backend-game-server-auth_service:buildcache
+          cache-to: type=registry,ref=https://ghcr.io/CE-Final-Project/dev-backend-game-server-auth_service:buildcache,mode=max

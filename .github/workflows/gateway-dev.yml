@@ -3,14 +3,14 @@ name: "gateway"
 on:
   push:
     branches:
-      - main
+      - develop
     paths:
       - "gateway/**"
       - "pkg/**"
       - ".github/workflows/gateway.yml"
   pull_request:
     branches:
-      - main
+      - develop
     paths:
       - "gateway/**"
       - "pkg/**"
@@ -56,6 +56,6 @@ jobs:
           file: ./Docker/gateway.Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:buildcache,mode=max
+          tags: https://ghcr.io/CE-Final-Project/dev-backend-game-server-gateway_service:latest
+          cache-from: type=registry,ref=https://ghcr.io/CE-Final-Project/dev-backend-game-server-gateway_service:buildcache
+          cache-to: type=registry,ref=https://ghcr.io/CE-Final-Project/dev-backend-game-server-gateway_service:buildcache,mode=max

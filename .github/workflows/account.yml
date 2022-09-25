@@ -2,6 +2,15 @@ name: "account"
 
 on:
   push:
+    branches:
+      - main
+    paths:
+      - "account/**"
+      - "pkg/**"
+      - ".github/workflows/account.yml"
+  pull_request:
+    branches:
+      - main
     paths:
       - "account/**"
       - "pkg/**"

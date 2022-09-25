@@ -1,20 +1,23 @@
-name: "gateway"
+name: "account"
 
 on:
   push:
     branches:
-      - main
+      - develop
     paths:
-      - "gateway/**"
+      - "account/**"
       - "pkg/**"
-      - ".github/workflows/gateway.yml"
+      - ".github/workflows/account.yml"
   pull_request:
     branches:
-      - main
+      - develop
     paths:
-      - "gateway/**"
+      - "account/**"
       - "pkg/**"
-      - ".github/workflows/gateway.yml"
+      - ".github/workflows/account.yml"
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: dev-backend-game-server-account_service
 
 jobs:
   test:
@@ -25,13 +28,16 @@ jobs:
       # run tests for route
       - name: Run tests
         run: |-
-          cd gateway
+          cd account
           go test ./...
   build_and_push:
     name: "Build Docker image and Push to Registry"
     needs:
       - test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       -
         name: Checkout
@@ -46,16 +52,17 @@ jobs:
         name: Login to DockerHub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       -
         name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./Docker/gateway.Dockerfile
+          file: ./Docker/account.Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-game-server-gateway_service:buildcache,mode=max
+          tags: ${{ env.REGISTRY }}/dev-backend-game-server-account_service:latest
+          cache-from: type=registry,ref=https://ghcr.io/CE-Final-Project/dev-backend-game-server-account_service:buildcache
+          cache-to: type=registry,ref=https://ghcr.io/CE-Final-Project/dev-backend-game-server-account_service:buildcache,mode=max
