@@ -1,1 +1,7 @@
 # BackendGameServer
+[![account](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/account.yml/badge.svg?branch=main)](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/account.yml)
+[![account-dev](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/account-dev.yml/badge.svg?branch=develop)](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/account-dev.yml)
+[![auth](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/auth.yml/badge.svg?branch=main)](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/auth.yml)
+[![auth-dev](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/auth-dev.yml/badge.svg?branch=develop)](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/auth-dev.yml)
+[![gateway](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/gateway.yml/badge.svg?branch=main)](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/gateway.yml)
+[![gateway-dev](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/gateway-dev.yml/badge.svg?branch=develop)](https://github.com/CE-Final-Project/BackendGameServer/actions/workflows/gateway-dev.yml)
