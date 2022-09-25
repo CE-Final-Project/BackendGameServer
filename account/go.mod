@@ -10,7 +10,6 @@ require (
 	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/ce-final-project/backend_game_server/pkg v0.0.0-00010101000000-000000000000
 	github.com/ce-final-project/backend_game_server/proto v0.0.0-00010101000000-000000000000
-	github.com/ce-final-project/backend_rest_api v0.0.0-20220908130108-d0580ac0c5e1
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/jmoiron/sqlx v1.3.5
