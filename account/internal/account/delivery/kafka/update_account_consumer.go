@@ -5,7 +5,7 @@ import (
 	"github.com/avast/retry-go"
 	"github.com/ce-final-project/backend_game_server/account/internal/account/commands"
 	"github.com/ce-final-project/backend_game_server/pkg/tracing"
-	kafkaMessages "github.com/ce-final-project/backend_rest_api/proto/kafka"
+	kafkaMessages "github.com/ce-final-project/backend_game_server/proto/kafka_messages"
 	uuid "github.com/satori/go.uuid"
 	"github.com/segmentio/kafka-go"
 	"google.golang.org/protobuf/proto"
@@ -17,21 +17,21 @@ func (s *accountMessageProcessor) processAccountUpdate(ctx context.Context, r *k
 	ctx, span := tracing.StartKafkaConsumerTracerSpan(ctx, m.Headers, "accountMessageProcessor.processUpdateAccount")
 	defer span.Finish()
 
-	msg := &kafkaMessages.AccountUpdate{}
+	msg := &kafkaMessages.AccountUpdated{}
 	if err := proto.Unmarshal(m.Value, msg); err != nil {
 		s.log.WarnMsg("proto.Unmarshal", err)
 		s.commitErrMessage(ctx, r, m)
 		return
 	}
-
-	accUUID, err := uuid.FromString(msg.GetAccountID())
+	account := msg.GetAccount()
+	accUUID, err := uuid.FromString(account.GetAccountID())
 	if err != nil {
 		s.log.WarnMsg("proto.Unmarshal", err)
 		s.commitErrMessage(ctx, r, m)
 		return
 	}
 
-	command := commands.NewUpdateAccountCommand(accUUID, msg.GetUsername(), msg.GetEmail(), time.Now())
+	command := commands.NewUpdateAccountCommand(accUUID, account.GetUsername(), account.GetEmail(), time.Now())
 	if err := s.v.StructCtx(ctx, command); err != nil {
 		s.log.WarnMsg("validate", err)
 		s.commitErrMessage(ctx, r, m)

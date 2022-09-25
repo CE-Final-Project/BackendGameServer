@@ -1,4 +1,4 @@
-name: "auth"
+name: "auth-dev"
 
 on:
   push:
@@ -7,14 +7,14 @@ on:
     paths:
       - "authentication/**"
       - "pkg/**"
-      - ".github/workflows/auth.yml"
+      - ".github/workflows/auth-dev.yml"
   pull_request:
     branches:
       - develop
     paths:
       - "authentication/**"
       - "pkg/**"
-      - ".github/workflows/auth.yml"
+      - ".github/workflows/auth-dev.yml"
 
 jobs:
   test:
@@ -39,6 +39,8 @@ jobs:
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
+        with:
+          platforms: "amd64,arm64"
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -56,6 +58,6 @@ jobs:
           file: ./Docker/auth.Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: https://ghcr.io/CE-Final-Project/dev-backend-game-server-auth_service:latest
-          cache-from: type=registry,ref=https://ghcr.io/CE-Final-Project/dev-backend-game-server-auth_service:buildcache
-          cache-to: type=registry,ref=https://ghcr.io/CE-Final-Project/dev-backend-game-server-auth_service:buildcache,mode=max
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/dev-backend-game-server-auth_service:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/dev-backend-game-server-auth_service:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/dev-backend-game-server-auth_service:buildcache,mode=max
