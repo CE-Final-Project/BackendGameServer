@@ -7,14 +7,14 @@ on:
     paths:
       - "account/**"
       - "pkg/**"
-      - ".github/workflows/account.yml"
+      - ".github/workflows/account-dev.yml"
   pull_request:
     branches:
       - develop
     paths:
       - "account/**"
       - "pkg/**"
-      - ".github/workflows/account.yml"
+      - ".github/workflows/account-dev.yml"
 
 jobs:
   test:

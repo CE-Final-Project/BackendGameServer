@@ -7,14 +7,14 @@ on:
     paths:
       - "authentication/**"
       - "pkg/**"
-      - ".github/workflows/auth.yml"
+      - ".github/workflows/auth-dev.yml"
   pull_request:
     branches:
       - develop
     paths:
       - "authentication/**"
       - "pkg/**"
-      - ".github/workflows/auth.yml"
+      - ".github/workflows/auth-dev.yml"
 
 jobs:
   test:

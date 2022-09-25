@@ -7,14 +7,14 @@ on:
     paths:
       - "gateway/**"
       - "pkg/**"
-      - ".github/workflows/gateway.yml"
+      - ".github/workflows/gateway-dev.yml"
   pull_request:
     branches:
       - develop
     paths:
       - "gateway/**"
       - "pkg/**"
-      - ".github/workflows/gateway.yml"
+      - ".github/workflows/gateway-dev.yml"
 
 jobs:
   test:
