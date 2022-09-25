@@ -1,107 +1,77 @@
 package v1
 
 import (
-	"context"
 	"github.com/ce-final-project/backend_game_server/gateway/config"
+	"github.com/ce-final-project/backend_game_server/gateway/internal/account/commands"
+	"github.com/ce-final-project/backend_game_server/gateway/internal/account/queries"
+	"github.com/ce-final-project/backend_game_server/gateway/internal/account/service"
 	"github.com/ce-final-project/backend_game_server/gateway/internal/dto"
 	"github.com/ce-final-project/backend_game_server/gateway/internal/middlewares"
-	"github.com/ce-final-project/backend_game_server/gateway/internal/service"
 	httpErrors "github.com/ce-final-project/backend_game_server/pkg/http_errors"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
+	"github.com/ce-final-project/backend_game_server/pkg/tracing"
+	"github.com/ce-final-project/backend_game_server/pkg/utils"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
+	"time"
 )
 
-type authsHandlers struct {
+type accountHandlers struct {
 	group *echo.Group
 	log   logger.Logger
 	mw    middlewares.MiddlewareManager
 	cfg   *config.Config
-	acs   service.AccountService
-	as    service.AuthService
+	acs   *service.AccountService
 	v     *validator.Validate
 }
 
-func NewAuthsHandlers(group *echo.Group, log logger.Logger, mw middlewares.MiddlewareManager, cfg *config.Config, acs service.AccountService, as service.AuthService, v *validator.Validate) *authsHandlers {
-	return &authsHandlers{
+func NewAccountHandlers(group *echo.Group, log logger.Logger, mw middlewares.MiddlewareManager, cfg *config.Config, acs *service.AccountService, v *validator.Validate) *accountHandlers {
+	return &accountHandlers{
 		group: group,
 		log:   log,
 		mw:    mw,
 		cfg:   cfg,
 		acs:   acs,
-		as:    as,
 		v:     v,
 	}
 }
 
-// Register
-// @Tags Authentication
-// @Summary Register Account
-// @Description Create new user account
+// SearchAccount
+// @Tags Account
+// @Summary Search Account
+// @Description Search Account with Username
+// @Security BearerAuth
 // @Accept json
 // @Produce json
-// @Param        request body dto.RegisterAccountDto true "Register body request"
-// @Success 201 {object} dto.RegisterAccountResponseDto
-// @Router /register [post]
-func (a *authsHandlers) Register() echo.HandlerFunc {
+// @Param        text   query      string  true  "Username"
+// @Success 200 {object} dto.AccountsListResponseDto
+// @Router /account/search [get]
+func (a *accountHandlers) SearchAccount() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-		registerDto := &dto.RegisterAccountDto{}
-		if err := c.Bind(registerDto); err != nil {
-			a.log.WarnMsg("Bind", err)
-			return httpErrors.ErrorCtxResponse(c, err, a.cfg.HTTP.DebugErrorsResponse)
-		}
+		ctx, span := tracing.StartHttpServerTracerSpan(c, "accountHandlers.SearchAccount")
+		defer span.Finish()
 
-		if err := a.v.StructCtx(ctx, registerDto); err != nil {
-			a.log.WarnMsg("validate", err)
-			return httpErrors.ErrorCtxResponse(c, err, a.cfg.HTTP.DebugErrorsResponse)
-		}
-		result, err := a.as.Register(ctx, registerDto)
-		if err != nil {
-			a.log.WarnMsg("RegisterAccount", httpErrors.BadRequest)
+		text := c.QueryParam("text")
+		if text == "" {
+			a.log.WarnMsg("text query param is empty", httpErrors.BadRequest)
 			return httpErrors.ErrorCtxResponse(c, httpErrors.BadRequest, a.cfg.HTTP.DebugErrorsResponse)
 		}
-		return c.JSON(http.StatusCreated, result)
-	}
-}
+		pagination := utils.NewPaginationQuery(10, 0)
+		query := queries.NewSearchAccountQuery(text, pagination)
 
-// Login
-// @Tags Authentication
-// @Summary Login
-// @Description Login with Username and Password
-// @Accept json
-// @Produce json
-// @Param        request body dto.LoginAccountDto true "Login body request"
-// @Success 200 {object} dto.LoginAccountResponseDto
-// @Router /login [post]
-func (a *authsHandlers) Login() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-		LoginDto := &dto.LoginAccountDto{}
-		if err := c.Bind(LoginDto); err != nil {
-			a.log.WarnMsg("Bind", err)
-			return httpErrors.ErrorCtxResponse(c, err, a.cfg.HTTP.DebugErrorsResponse)
-		}
-
-		if err := a.v.StructCtx(ctx, LoginDto); err != nil {
-			a.log.WarnMsg("validate", err)
-			return httpErrors.ErrorCtxResponse(c, err, a.cfg.HTTP.DebugErrorsResponse)
-		}
-		result, err := a.as.Login(ctx, LoginDto)
+		result, err := a.acs.Queries.SearchAccount.Handle(ctx, query)
 		if err != nil {
-			a.log.WarnMsg("LoginAccount", httpErrors.WrongCredentials)
-			return httpErrors.ErrorCtxResponse(c, httpErrors.WrongCredentials, a.cfg.HTTP.DebugErrorsResponse)
+			a.log.WarnMsg("Queries.SearchAccount.Handle", err)
+			return httpErrors.ErrorCtxResponse(c, errors.Cause(err), a.cfg.HTTP.DebugErrorsResponse)
 		}
 		return c.JSON(http.StatusOK, result)
 	}
 }
 
-// GetAccount
+// GetAccountById
 // @Tags Account
 // @Summary Account information by ID
 // @Description Get all information Account by ID
@@ -111,10 +81,10 @@ func (a *authsHandlers) Login() echo.HandlerFunc {
 // @Param        id   path      string  true  "Account ID"
 // @Success 200 {object} dto.AccountResponseDto
 // @Router /account/{id} [get]
-func (a *authsHandlers) GetAccount() echo.HandlerFunc {
+func (a *accountHandlers) GetAccountById() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
+		ctx, span := tracing.StartHttpServerTracerSpan(c, "accountHandlers.GetAccountById")
+		defer span.Finish()
 
 		accountID := c.Param("id")
 
@@ -130,7 +100,10 @@ func (a *authsHandlers) GetAccount() echo.HandlerFunc {
 			a.log.WarnMsg("uuid.FromString", errors.Cause(err))
 			return httpErrors.ErrorCtxResponse(c, errors.Cause(err), a.cfg.HTTP.DebugErrorsResponse)
 		}
-		result, err := a.acs.GetAccountById(ctx, accountUUID)
+
+		query := queries.NewGetAccountByIdQuery(accountUUID)
+
+		result, err := a.acs.Queries.GetAccountById.Handle(ctx, query)
 		if err != nil {
 			a.log.WarnMsg("GetAccountById", errors.Cause(err))
 			return httpErrors.ErrorCtxResponse(c, errors.Cause(err), a.cfg.HTTP.DebugErrorsResponse)
@@ -146,15 +119,15 @@ func (a *authsHandlers) GetAccount() echo.HandlerFunc {
 // @Security BearerAuth
 // @Accept json
 // @Produce json
-// @Param        request body dto.UpdateAccountDto true "Update body request"
-// @Success 200 {object} dto.UpdateAccountResponseDto
+// @Param        request body dto.UpdateAccount true "Update body request"
+// @Success 200 {object} dto.UpdateAccountResponse
 // @Router /account [put]
-func (a *authsHandlers) UpdateAccount() echo.HandlerFunc {
+func (a *accountHandlers) UpdateAccount() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
+		ctx, span := tracing.StartHttpServerTracerSpan(c, "accountHandlers.UpdateAccount")
+		defer span.Finish()
 
-		updateDto := &dto.UpdateAccountDto{}
+		updateDto := &dto.UpdateAccount{}
 		if err := c.Bind(updateDto); err != nil {
 			a.log.WarnMsg("Bind", err)
 			return httpErrors.ErrorCtxResponse(c, err, a.cfg.HTTP.DebugErrorsResponse)
@@ -167,12 +140,17 @@ func (a *authsHandlers) UpdateAccount() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, httpErrors.WrongCredentials, a.cfg.HTTP.DebugErrorsResponse)
 		}
 
-		result, err := a.acs.UpdateAccount(ctx, updateDto)
+		command := commands.NewUpdateAccountCommand(updateDto)
+
+		err := a.acs.Commands.UpdateAccount.Handle(ctx, command)
 		if err != nil {
 			a.log.WarnMsg("UpdateAccount", errors.Cause(err))
 			return httpErrors.ErrorCtxResponse(c, errors.Cause(err), a.cfg.HTTP.DebugErrorsResponse)
 		}
-		return c.JSON(http.StatusOK, result)
+		return c.JSON(http.StatusOK, &dto.UpdateAccountResponse{
+			AccountID: updateDto.AccountID,
+			UpdatedAt: time.Now(),
+		})
 	}
 }
 
@@ -183,14 +161,15 @@ func (a *authsHandlers) UpdateAccount() echo.HandlerFunc {
 // @Security BearerAuth
 // @Accept json
 // @Produce json
-// @Param        request body dto.ChangePasswordDto true "ChangePassword body request"
-// @Success 200 {object} dto.UpdateAccountResponseDto
+// @Param        request body dto.ChangePassword true "ChangePassword body request"
+// @Success 200 {object} dto.UpdateAccountResponse
 // @Router /account/password [put]
-func (a *authsHandlers) ChangePassword() echo.HandlerFunc {
+func (a *accountHandlers) ChangePassword() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-		changePwdDto := &dto.ChangePasswordDto{}
+		ctx, span := tracing.StartHttpServerTracerSpan(c, "accountHandlers.ChangePassword")
+		defer span.Finish()
+
+		changePwdDto := &dto.ChangePassword{}
 		if err := c.Bind(changePwdDto); err != nil {
 			a.log.WarnMsg("Bind", err)
 			return httpErrors.ErrorCtxResponse(c, err, a.cfg.HTTP.DebugErrorsResponse)
@@ -203,11 +182,16 @@ func (a *authsHandlers) ChangePassword() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, httpErrors.Unauthorized, a.cfg.HTTP.DebugErrorsResponse)
 		}
 
-		result, err := a.acs.ChangePassword(ctx, changePwdDto)
+		command := commands.NewChangePasswordCommand(changePwdDto)
+
+		err := a.acs.Commands.ChangePassword.Handle(ctx, command)
 		if err != nil {
 			a.log.WarnMsg("ChangePassword", errors.Cause(err))
 			return httpErrors.ErrorCtxResponse(c, httpErrors.WrongCredentials, a.cfg.HTTP.DebugErrorsResponse)
 		}
-		return c.JSON(http.StatusOK, result)
+		return c.JSON(http.StatusOK, &dto.UpdateAccountResponse{
+			AccountID: changePwdDto.AccountID,
+			UpdatedAt: time.Now(),
+		})
 	}
 }

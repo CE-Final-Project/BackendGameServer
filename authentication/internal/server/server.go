@@ -10,6 +10,7 @@ import (
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/go-playground/validator"
 	"github.com/pkg/errors"
+	"google.golang.org/grpc"
 	"os"
 	"os/signal"
 	"syscall"
@@ -38,7 +39,12 @@ func (s *server) Run() error {
 	if err != nil {
 		return err
 	}
-	defer accountServiceConn.Close()
+	defer func(accountServiceConn *grpc.ClientConn) {
+		err := accountServiceConn.Close()
+		if err != nil {
+			s.log.WarnMsg("close accountServiceConn", err)
+		}
+	}(accountServiceConn)
 	asClient := accountService.NewAccountServiceClient(accountServiceConn)
 
 	kafkaProducer := kafkaClient.NewProducer(s.log, s.cfg.Kafka.Brokers)

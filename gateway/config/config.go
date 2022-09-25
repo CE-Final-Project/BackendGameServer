@@ -35,12 +35,15 @@ type Http struct {
 }
 
 type Grpc struct {
-	AuthServicePort string
+	AuthServicePort    string
+	AccountServicePort string
 }
 
 type KafkaTopics struct {
 	AccountRegister kafka.TopicConfig
 	AccountUpdate   kafka.TopicConfig
+	ChangePassword  kafka.TopicConfig
+	AccountBan      kafka.TopicConfig
 	AccountDelete   kafka.TopicConfig
 }
 

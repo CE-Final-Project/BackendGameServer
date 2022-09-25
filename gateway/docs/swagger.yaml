@@ -22,7 +22,24 @@ definitions:
     - player_id
     - username
     type: object
-  dto.ChangePasswordDto:
+  dto.AccountsListResponseDto:
+    properties:
+      accounts:
+        items:
+          $ref: '#/definitions/dto.AccountResponseDto'
+        type: array
+      hasMore:
+        type: boolean
+      page:
+        type: integer
+      size:
+        type: integer
+      totalCount:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
+  dto.ChangePassword:
     properties:
       account_id:
         type: string
@@ -35,7 +52,7 @@ definitions:
     - new_password
     - old_password
     type: object
-  dto.LoginAccountDto:
+  dto.LoginAccount:
     properties:
       password:
         type: string
@@ -45,7 +62,7 @@ definitions:
     - password
     - username
     type: object
-  dto.LoginAccountResponseDto:
+  dto.LoginAccountResponse:
     properties:
       account_id:
         type: string
@@ -58,7 +75,7 @@ definitions:
     - player_id
     - token
     type: object
-  dto.RegisterAccountDto:
+  dto.RegisterAccount:
     properties:
       email:
         type: string
@@ -71,7 +88,7 @@ definitions:
     - password
     - username
     type: object
-  dto.RegisterAccountResponseDto:
+  dto.RegisterAccountResponse:
     properties:
       account_id:
         type: string
@@ -84,7 +101,7 @@ definitions:
     - player_id
     - token
     type: object
-  dto.UpdateAccountDto:
+  dto.UpdateAccount:
     properties:
       account_id:
         type: string
@@ -95,7 +112,7 @@ definitions:
     required:
     - account_id
     type: object
-  dto.UpdateAccountResponseDto:
+  dto.UpdateAccountResponse:
     properties:
       account_id:
         type: string
@@ -121,14 +138,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateAccountDto'
+          $ref: '#/definitions/dto.UpdateAccount'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.UpdateAccountResponseDto'
+            $ref: '#/definitions/dto.UpdateAccountResponse'
       security:
       - BearerAuth: []
       summary: Update account
@@ -168,17 +185,40 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.ChangePasswordDto'
+          $ref: '#/definitions/dto.ChangePassword'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.UpdateAccountResponseDto'
+            $ref: '#/definitions/dto.UpdateAccountResponse'
       security:
       - BearerAuth: []
       summary: Change password account
+      tags:
+      - Account
+  /account/search:
+    get:
+      consumes:
+      - application/json
+      description: Search Account with Username
+      parameters:
+      - description: Username
+        in: query
+        name: text
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AccountsListResponseDto'
+      security:
+      - BearerAuth: []
+      summary: Search Account
       tags:
       - Account
   /login:
@@ -192,14 +232,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.LoginAccountDto'
+          $ref: '#/definitions/dto.LoginAccount'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.LoginAccountResponseDto'
+            $ref: '#/definitions/dto.LoginAccountResponse'
       summary: Login
       tags:
       - Authentication
@@ -214,14 +254,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.RegisterAccountDto'
+          $ref: '#/definitions/dto.RegisterAccount'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/dto.RegisterAccountResponseDto'
+            $ref: '#/definitions/dto.RegisterAccountResponse'
       summary: Register Account
       tags:
       - Authentication

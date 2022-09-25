@@ -45,7 +45,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateAccountDto"
+                            "$ref": "#/definitions/dto.UpdateAccount"
                         }
                     }
                 ],
@@ -53,7 +53,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateAccountResponseDto"
+                            "$ref": "#/definitions/dto.UpdateAccountResponse"
                         }
                     }
                 }
@@ -84,7 +84,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ChangePasswordDto"
+                            "$ref": "#/definitions/dto.ChangePassword"
                         }
                     }
                 ],
@@ -92,7 +92,44 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateAccountResponseDto"
+                            "$ref": "#/definitions/dto.UpdateAccountResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/search": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Search Account with Username",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Search Account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "text",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AccountsListResponseDto"
                         }
                     }
                 }
@@ -155,7 +192,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginAccountDto"
+                            "$ref": "#/definitions/dto.LoginAccount"
                         }
                     }
                 ],
@@ -163,7 +200,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginAccountResponseDto"
+                            "$ref": "#/definitions/dto.LoginAccountResponse"
                         }
                     }
                 }
@@ -189,7 +226,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RegisterAccountDto"
+                            "$ref": "#/definitions/dto.RegisterAccount"
                         }
                     }
                 ],
@@ -197,7 +234,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.RegisterAccountResponseDto"
+                            "$ref": "#/definitions/dto.RegisterAccountResponse"
                         }
                     }
                 }
@@ -238,7 +275,33 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ChangePasswordDto": {
+        "dto.AccountsListResponseDto": {
+            "type": "object",
+            "properties": {
+                "accounts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.AccountResponseDto"
+                    }
+                },
+                "hasMore": {
+                    "type": "boolean"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "totalCount": {
+                    "type": "integer"
+                },
+                "totalPages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ChangePassword": {
             "type": "object",
             "required": [
                 "account_id",
@@ -257,7 +320,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LoginAccountDto": {
+        "dto.LoginAccount": {
             "type": "object",
             "required": [
                 "password",
@@ -272,7 +335,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LoginAccountResponseDto": {
+        "dto.LoginAccountResponse": {
             "type": "object",
             "required": [
                 "account_id",
@@ -291,7 +354,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RegisterAccountDto": {
+        "dto.RegisterAccount": {
             "type": "object",
             "required": [
                 "email",
@@ -310,7 +373,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RegisterAccountResponseDto": {
+        "dto.RegisterAccountResponse": {
             "type": "object",
             "required": [
                 "account_id",
@@ -329,7 +392,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateAccountDto": {
+        "dto.UpdateAccount": {
             "type": "object",
             "required": [
                 "account_id"
@@ -346,7 +409,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateAccountResponseDto": {
+        "dto.UpdateAccountResponse": {
             "type": "object",
             "required": [
                 "account_id"

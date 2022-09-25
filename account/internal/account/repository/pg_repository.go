@@ -130,7 +130,12 @@ func (a *postgresRepository) Search(ctx context.Context, search string, paginati
 	var total int64
 	accounts := make([]*models.Account, 0, pagination.GetSize())
 
-	defer rows.Close()
+	defer func(rows *sqlx.Rows) {
+		err := rows.Close()
+		if err != nil {
+			a.log.WarnMsg("Close rows searchAccount", err)
+		}
+	}(rows)
 
 	for rows.Next() {
 		account := models.Account{}

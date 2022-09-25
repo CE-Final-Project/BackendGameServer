@@ -8,8 +8,8 @@ import (
 	"github.com/ce-final-project/backend_game_server/authentication/internal/auth/service"
 	authService "github.com/ce-final-project/backend_game_server/authentication/proto"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
+	"github.com/ce-final-project/backend_game_server/pkg/tracing"
 	"github.com/ce-final-project/backend_game_server/pkg/utils"
-	"github.com/ce-final-project/backend_rest_api/pkg/tracing"
 	"github.com/go-playground/validator"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
@@ -118,7 +118,7 @@ func (g *grpcService) Register(ctx context.Context, req *authService.RegisterReq
 	}, nil
 }
 
-func (g *grpcService) VerifyToken(ctx context.Context, req *authService.VerifyTokenReq) (*authService.VerifyTokenRes, error) {
+func (g *grpcService) VerifyToken(_ context.Context, req *authService.VerifyTokenReq) (*authService.VerifyTokenRes, error) {
 	result, err := g.validateToken(req.GetToken())
 	if err != nil {
 		g.log.Error(err)

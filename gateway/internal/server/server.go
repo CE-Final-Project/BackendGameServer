@@ -2,12 +2,16 @@ package server
 
 import (
 	"context"
+	accountService "github.com/ce-final-project/backend_game_server/account/proto"
 	authService "github.com/ce-final-project/backend_game_server/authentication/proto"
 	"github.com/ce-final-project/backend_game_server/gateway/config"
-	"github.com/ce-final-project/backend_game_server/gateway/internal/client"
-	v1 "github.com/ce-final-project/backend_game_server/gateway/internal/delivery/http/v1"
+	accountClient "github.com/ce-final-project/backend_game_server/gateway/internal/account/client"
+	accountV1 "github.com/ce-final-project/backend_game_server/gateway/internal/account/delivery/http/v1"
+	sAcc "github.com/ce-final-project/backend_game_server/gateway/internal/account/service"
+	authClient "github.com/ce-final-project/backend_game_server/gateway/internal/auth/client"
+	authV1 "github.com/ce-final-project/backend_game_server/gateway/internal/auth/delivery/http/v1"
+	sAuth "github.com/ce-final-project/backend_game_server/gateway/internal/auth/service"
 	"github.com/ce-final-project/backend_game_server/gateway/internal/middlewares"
-	"github.com/ce-final-project/backend_game_server/gateway/internal/service"
 	"github.com/ce-final-project/backend_game_server/pkg/kafka"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/go-playground/validator"
@@ -23,8 +27,8 @@ type server struct {
 	v    *validator.Validate
 	mw   middlewares.MiddlewareManager
 	echo *echo.Echo
-	acs  service.AccountService
-	as   service.AuthService
+	acs  *sAcc.AccountService
+	as   *sAuth.AuthService
 }
 
 func NewServer(log logger.Logger, cfg *config.Config) *server {
@@ -40,21 +44,32 @@ func (s *server) Run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 
-	s.mw = middlewares.NewMiddlewareManager(s.log, s.cfg)
-	authServiceConn, err := client.NewAuthServiceConn(ctx, s.cfg)
+	authServiceConn, err := authClient.NewAuthServiceConn(ctx, s.cfg)
 	if err != nil {
 		return err
 	}
 	defer authServiceConn.Close()
 	asClient := authService.NewAuthServiceClient(authServiceConn)
 
+	accountServiceConn, err := accountClient.NewAccountServiceConn(ctx, s.cfg)
+	if err != nil {
+		return err
+	}
+	defer accountServiceConn.Close()
+
+	acsClient := accountService.NewAccountServiceClient(accountServiceConn)
+
 	kafkaProducer := kafka.NewProducer(s.log, s.cfg.Kafka.Brokers)
 
-	s.acs = service.NewAccountService(s.log, kafkaProducer, s.cfg, asClient)
-	s.as = service.NewAuthService(s.log, kafkaProducer, s.cfg, asClient)
+	s.acs = sAcc.NewAccountService(s.log, s.cfg, kafkaProducer, acsClient)
+	s.as = sAuth.NewAuthService(s.log, s.cfg, kafkaProducer, asClient)
+	s.mw = middlewares.NewMiddlewareManager(s.log, s.cfg, s.as)
 
-	authHandler := v1.NewAuthsHandlers(s.echo.Group("/api/v1"), s.log, s.mw, s.cfg, s.acs, s.as, s.v)
+	authHandler := authV1.NewAuthsHandlers(s.echo.Group("/api/v1"), s.log, s.mw, s.cfg, s.as, s.v)
 	authHandler.MapRoutes()
+
+	accountHandler := accountV1.NewAccountHandlers(s.echo.Group("/api/v1"), s.log, s.mw, s.cfg, s.acs, s.v)
+	accountHandler.MapRoutes()
 
 	go func() {
 		if err := s.runHttpServer(); err != nil {

@@ -1,7 +1,7 @@
 package dto
 
 import (
-	authService "github.com/ce-final-project/backend_game_server/authentication/proto"
+	accountService "github.com/ce-final-project/backend_game_server/account/proto"
 	"time"
 )
 
@@ -15,7 +15,7 @@ type AccountResponseDto struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
-func AccountResponseFromGrpc(account *authService.Account) *AccountResponseDto {
+func AccountResponseFromGrpc(account *accountService.Account) *AccountResponseDto {
 	return &AccountResponseDto{
 		AccountID: account.GetAccountID(),
 		PlayerID:  account.GetPlayerID(),
@@ -36,7 +36,7 @@ type AccountsListResponseDto struct {
 	Accounts   []*AccountResponseDto `json:"accounts" bson:"accounts"`
 }
 
-func AccountsListResponseFromGrpc(listResponse *authService.SearchRes) *AccountsListResponseDto {
+func AccountsListResponseFromGrpc(listResponse *accountService.SearchRes) *AccountsListResponseDto {
 	list := make([]*AccountResponseDto, 0, len(listResponse.GetAccounts()))
 	for _, product := range listResponse.GetAccounts() {
 		list = append(list, AccountResponseFromGrpc(product))

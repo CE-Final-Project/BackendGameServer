@@ -2,11 +2,10 @@ package queries
 
 import (
 	"context"
-	authService "github.com/ce-final-project/backend_game_server/authentication/proto"
+	accountService "github.com/ce-final-project/backend_game_server/account/proto"
 	"github.com/ce-final-project/backend_game_server/gateway/config"
 	"github.com/ce-final-project/backend_game_server/gateway/internal/dto"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
-	"github.com/ce-final-project/backend_rest_api/pkg/tracing"
 	"github.com/opentracing/opentracing-go"
 )
 
@@ -17,10 +16,10 @@ type GetAccountByIdHandler interface {
 type getAccountByIdHandler struct {
 	log      logger.Logger
 	cfg      *config.Config
-	asClient authService.AuthServiceClient
+	asClient accountService.AccountServiceClient
 }
 
-func NewGetAccountByIdHandler(log logger.Logger, cfg *config.Config, asClient authService.AuthServiceClient) *getAccountByIdHandler {
+func NewGetAccountByIdHandler(log logger.Logger, cfg *config.Config, asClient accountService.AccountServiceClient) *getAccountByIdHandler {
 	return &getAccountByIdHandler{log: log, cfg: cfg, asClient: asClient}
 }
 
@@ -28,11 +27,10 @@ func (q *getAccountByIdHandler) Handle(ctx context.Context, query *GetAccountByI
 	span, ctx := opentracing.StartSpanFromContext(ctx, "getAccountByIdHandler.Handle")
 	defer span.Finish()
 
-	ctx = tracing.InjectTextMapCarrierToGrpcMetaData(ctx, span.Context())
-	res, err := q.asClient.GetAccountById(ctx, &authService.GetAccountByIdReq{AccountID: query.AccountID.String()})
+	res, err := q.asClient.GetAccountById(ctx, &accountService.GetAccountByIdReq{AccountID: query.AccountID.String()})
 	if err != nil {
 		return nil, err
 	}
 
-	return dto.AccountResponseFromGrpc(res), nil
+	return dto.AccountResponseFromGrpc(res.GetAccount()), nil
 }

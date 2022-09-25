@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/avast/retry-go"
 	"github.com/ce-final-project/backend_game_server/account/internal/account/commands"
-	"github.com/ce-final-project/backend_rest_api/pkg/tracing"
+	"github.com/ce-final-project/backend_game_server/pkg/tracing"
 	kafkaMessages "github.com/ce-final-project/backend_rest_api/proto/kafka"
 	uuid "github.com/satori/go.uuid"
 	"github.com/segmentio/kafka-go"

@@ -213,7 +213,12 @@ func (l *appLogger) Fatalf(template string, args ...interface{}) {
 
 // Sync flushes any buffered log entries
 func (l *appLogger) Sync() error {
-	go l.logger.Sync() // nolint: errcheck
+	go func() {
+		err := l.logger.Sync()
+		if err != nil {
+			return
+		}
+	}()
 	return l.sugarLogger.Sync()
 }
 
