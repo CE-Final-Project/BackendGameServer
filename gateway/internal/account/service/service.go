@@ -24,11 +24,12 @@ func NewAccountService(
 	updateAccountCmdHandler := commands.NewUpdateAccountHandler(log, cfg, kafkaProducer)
 	changePasswordCmdHandler := commands.NewChangePasswordHandler(log, cfg, kafkaProducer)
 	banAccountCmdHandler := commands.NewBanAccountHandler(log, cfg, kafkaProducer)
+	deleteAccountCmdHandler := commands.NewDeleteAccountHandler(log, cfg, kafkaProducer)
 
 	getAccountByIdQueryHandler := queries.NewGetAccountByIdHandler(log, cfg, accService)
 	searchAccountQueryHandler := queries.NewSearchAccountHandler(log, cfg, accService)
 
-	accountCommands := commands.NewAccountCommands(updateAccountCmdHandler, changePasswordCmdHandler, banAccountCmdHandler)
+	accountCommands := commands.NewAccountCommands(updateAccountCmdHandler, changePasswordCmdHandler, banAccountCmdHandler, deleteAccountCmdHandler)
 	accountQueries := queries.NewAccountQueries(getAccountByIdQueryHandler, searchAccountQueryHandler)
 
 	return &AccountService{

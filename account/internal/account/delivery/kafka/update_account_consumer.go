@@ -17,21 +17,20 @@ func (s *accountMessageProcessor) processAccountUpdate(ctx context.Context, r *k
 	ctx, span := tracing.StartKafkaConsumerTracerSpan(ctx, m.Headers, "accountMessageProcessor.processUpdateAccount")
 	defer span.Finish()
 
-	msg := &kafkaMessages.AccountUpdated{}
+	msg := &kafkaMessages.UpdateAccount{}
 	if err := proto.Unmarshal(m.Value, msg); err != nil {
 		s.log.WarnMsg("proto.Unmarshal", err)
 		s.commitErrMessage(ctx, r, m)
 		return
 	}
-	account := msg.GetAccount()
-	accUUID, err := uuid.FromString(account.GetAccountID())
+	accUUID, err := uuid.FromString(msg.GetAccountID())
 	if err != nil {
 		s.log.WarnMsg("proto.Unmarshal", err)
 		s.commitErrMessage(ctx, r, m)
 		return
 	}
 
-	command := commands.NewUpdateAccountCommand(accUUID, account.GetUsername(), account.GetEmail(), time.Now())
+	command := commands.NewUpdateAccountCommand(accUUID, msg.GetUsername(), msg.GetEmail(), time.Now())
 	if err := s.v.StructCtx(ctx, command); err != nil {
 		s.log.WarnMsg("validate", err)
 		s.commitErrMessage(ctx, r, m)

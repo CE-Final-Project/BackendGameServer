@@ -28,6 +28,8 @@ func (s *server) getConsumerGroupTopics() []string {
 	return []string{
 		s.cfg.KafkaTopics.AccountRegister.TopicName,
 		s.cfg.KafkaTopics.AccountUpdate.TopicName,
+		s.cfg.KafkaTopics.ChangePassword.TopicName,
+		s.cfg.KafkaTopics.AccountBan.TopicName,
 		s.cfg.KafkaTopics.AccountDelete.TopicName,
 	}
 }

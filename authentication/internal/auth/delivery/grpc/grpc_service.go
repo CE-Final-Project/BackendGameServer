@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"database/sql"
 	"github.com/ce-final-project/backend_game_server/authentication/config"
 	"github.com/ce-final-project/backend_game_server/authentication/internal/auth/commands"
 	"github.com/ce-final-project/backend_game_server/authentication/internal/auth/queries"
@@ -95,7 +96,7 @@ func (g *grpcService) Register(ctx context.Context, req *authService.RegisterReq
 		return nil, err
 	}
 
-	command := commands.NewRegisterCommand(accountUUID, playerID, req.GetUsername(), req.GetPassword(), req.GetPassword())
+	command := commands.NewRegisterCommand(accountUUID, playerID, req.GetUsername(), req.GetEmail(), req.GetPassword())
 	if err := g.v.StructCtx(ctx, command); err != nil {
 		g.log.WarnMsg("validate", err)
 		return nil, g.errResponse(codes.InvalidArgument, err)
@@ -118,7 +119,7 @@ func (g *grpcService) Register(ctx context.Context, req *authService.RegisterReq
 	}, nil
 }
 
-func (g *grpcService) VerifyToken(_ context.Context, req *authService.VerifyTokenReq) (*authService.VerifyTokenRes, error) {
+func (g *grpcService) VerifyToken(ctx context.Context, req *authService.VerifyTokenReq) (*authService.VerifyTokenRes, error) {
 	result, err := g.validateToken(req.GetToken())
 	if err != nil {
 		g.log.Error(err)
@@ -126,8 +127,26 @@ func (g *grpcService) VerifyToken(_ context.Context, req *authService.VerifyToke
 			Valid:     false,
 			AccountID: "",
 			PlayerID:  "",
-		}, status.Error(codes.Internal, "jwt token pars error")
+		}, status.Error(codes.InvalidArgument, "token validation error")
 	}
+
+	query := queries.NewGetAccountByIdQuery(result.GetAccountID())
+	account, err := g.as.Queries.GetAccountById.Handle(ctx, query)
+	if err != nil {
+		g.log.WarnMsg("GetAccount_VerifyToken.Handle", err)
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, g.errResponse(codes.NotFound, err)
+		}
+		return nil, g.errResponse(codes.Internal, err)
+	}
+	if account == nil {
+		return &authService.VerifyTokenRes{
+			Valid:     false,
+			AccountID: "",
+			PlayerID:  "",
+		}, g.errResponse(codes.Unauthenticated, err)
+	}
+
 	return result, nil
 }
 

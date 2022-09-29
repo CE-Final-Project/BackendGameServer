@@ -53,8 +53,8 @@ func (s *server) Run() error {
 	defer s.redisClient.Close()
 	s.log.Infof("Redis connected: %+v", s.redisClient.PoolStats())
 
-	kafkaProducer := kafkaClient.NewProducer(s.log, s.cfg.Kafka.Brokers)
-	defer kafkaProducer.Close()
+	//kafkaProducer := kafkaClient.NewProducer(s.log, s.cfg.Kafka.Brokers)
+	//defer kafkaProducer.Close()
 
 	pgRepo, err := repository.NewAccountRepository(s.log, s.db)
 	if err != nil {

@@ -2,42 +2,34 @@ serviceName: authentication_service
 grpc:
   port: :5003
   development: true
-  accountServicePort: :5004
+  accountServicePort: account_service:5004
 logger:
   level: debug
   devMode: false
   encoder: json
 kafka:
-  brokers: [ "localhost:9092" ]
-  groupID: auth_microservice
+  brokers: [ "kafka:9092" ]
+  groupID: game_microservice_consumer
   initTopics: true
 kafkaTopics:
   accountRegister:
-    topicName: account_register
+    topicName: accountRegister
     partitions: 10
     replicationFactor: 1
   accountUpdate:
-    topicName: account_update
+    topicName: accountUpdate
     partitions: 10
     replicationFactor: 1
   changePassword:
-    topicName: account_change_password
+    topicName: accountChangePassword
     partitions: 10
     replicationFactor: 1
   accountBan:
-    topicName: account_ban
+    topicName: accountBan
     partitions: 10
     replicationFactor: 1
-  accountRegistered:
-    topicName: account_registered
-    partitions: 10
-    replicationFactor: 1
-  accountUpdated:
-    topicName: account_updated
-    partitions: 10
-    replicationFactor: 1
-  accountDeleted:
-    topicName: account_deleted
+  accountDelete:
+    topicName: accountDelete
     partitions: 10
     replicationFactor: 1
 redis:

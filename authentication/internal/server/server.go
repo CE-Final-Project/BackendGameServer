@@ -10,6 +10,7 @@ import (
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/go-playground/validator"
 	"github.com/pkg/errors"
+	"github.com/segmentio/kafka-go"
 	"google.golang.org/grpc"
 	"os"
 	"os/signal"
@@ -17,10 +18,11 @@ import (
 )
 
 type server struct {
-	log logger.Logger
-	cfg *config.Config
-	v   *validator.Validate
-	as  *service.AuthService
+	log       logger.Logger
+	cfg       *config.Config
+	v         *validator.Validate
+	as        *service.AuthService
+	kafkaConn *kafka.Conn
 }
 
 func NewServer(log logger.Logger, cfg *config.Config) *server {
@@ -51,6 +53,15 @@ func (s *server) Run() error {
 	defer kafkaProducer.Close()
 
 	s.as = service.NewAuthService(s.log, s.cfg, kafkaProducer, asClient)
+
+	if err := s.connectKafkaBrokers(ctx); err != nil {
+		return errors.Wrap(err, "s.connectKafkaBrokers")
+	}
+	defer s.kafkaConn.Close()
+
+	if s.cfg.Kafka.InitTopics {
+		s.initKafkaTopics(ctx)
+	}
 
 	closeGrpcServer, grpcServer, err := s.NewAuthGrpcServer()
 	if err != nil {

@@ -19,9 +19,10 @@ func NewAuthService(log logger.Logger, cfg *config.Config, kafkaProducer kafkaCl
 	registerCommandHandler := commands.NewRegisterAccountHandler(log, cfg, kafkaProducer)
 
 	getAccountByUsernameHandler := queries.NewGetAccountByUsernameHandler(log, cfg, asClient)
+	getAccountByIdHandler := queries.NewGetAccountByIdHandler(log, cfg, asClient)
 
 	authCommands := commands.NewAuthCommands(registerCommandHandler)
-	authQueries := queries.NewAuthQueries(getAccountByUsernameHandler)
+	authQueries := queries.NewAuthQueries(getAccountByUsernameHandler, getAccountByIdHandler)
 	return &AuthService{
 		Commands: authCommands,
 		Queries:  authQueries,

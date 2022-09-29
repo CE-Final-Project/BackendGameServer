@@ -83,12 +83,16 @@ func (mw *middlewareManager) AuthorizationMiddleware() echo.MiddlewareFunc {
 
 			header := c.Request().Header
 			token := header.Get(mw.cfg.JWT.HeaderAuthorization)
+			if token == "" {
+				mw.log.WarnMsg("Token Header not found!", httpErrors.WrongCredentials)
+				return httpErrors.ErrorCtxResponse(c, httpErrors.WrongCredentials, mw.cfg.HTTP.DebugErrorsResponse)
+			}
 			mw.log.Debugf("Token from Header %v", token)
 			query := queries.NewVerifyTokenQuery(token)
 
 			result, err := mw.as.Queries.VerifyToken.Handle(ctx, query)
 			if err != nil {
-				return err
+				return httpErrors.ErrorCtxResponse(c, httpErrors.WrongCredentials, mw.cfg.HTTP.DebugErrorsResponse)
 			}
 			mw.log.Debugf("Result verifyToken %v", result)
 			if !result.Valid {
