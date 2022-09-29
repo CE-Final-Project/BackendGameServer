@@ -123,9 +123,9 @@ services:
     container_name: nginx
     restart: unless-stopped
     ports:
-      - '8080:80'
+      - '80:80'
       - '8081:81'
-      - '8443:443'
+      - '443:443'
     networks:
       - game_server
     volumes:

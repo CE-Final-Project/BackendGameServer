@@ -8,13 +8,6 @@ on:
       - "account/**"
       - "pkg/**"
       - ".github/workflows/account.yml"
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "account/**"
-      - "pkg/**"
-      - ".github/workflows/account.yml"
 
 jobs:
   test:

@@ -67,7 +67,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: "admin@kmitl.ac.th"
       PGADMIN_DEFAULT_PASSWORD: "s8KHf^fLFWHppKtUJf7VtTE"
   zookeeper:
-    image: zookeeper:3.5
+    image: zookeeper:3.8.0
     container_name: zookeeper
     networks:
       - game_server

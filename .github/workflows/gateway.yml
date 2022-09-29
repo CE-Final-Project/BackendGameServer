@@ -8,13 +8,6 @@ on:
       - "gateway/**"
       - "pkg/**"
       - ".github/workflows/gateway.yml"
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "gateway/**"
-      - "pkg/**"
-      - ".github/workflows/gateway.yml"
 
 jobs:
   test:
