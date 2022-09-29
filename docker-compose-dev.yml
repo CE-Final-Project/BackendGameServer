@@ -8,6 +8,9 @@ services:
       dockerfile: Docker/gateway.Dockerfile
     networks:
       - game_server
+    depends_on:
+      kafka:
+        condition: service_healthy
     environment:
       TZ: "Asia/Bangkok"
     ports:
@@ -21,7 +24,10 @@ services:
     networks:
       - game_server
     depends_on:
-      - gateway_service
+      gateway_service:
+        condition: service_started
+      kafka:
+        condition: service_healthy
     environment:
       TZ: "Asia/Bangkok"
     ports:
@@ -102,6 +108,11 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--list", "--bootstrap-server", "host.docker.internal:9092"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
   redis:
     image: redis
     container_name: redis
