@@ -6,13 +6,15 @@ type AccountCommands struct {
 	UpdateAccount  UpdateAccountCmdHandler
 	ChangePassword ChangePasswordCmdHandler
 	BanAccount     BanAccountCmdHandler
+	DeleteAccount  DeleteAccountCmdHandler
 }
 
-func NewAccountCommands(updateAccount UpdateAccountCmdHandler, changePassword ChangePasswordCmdHandler, banAccount BanAccountCmdHandler) *AccountCommands {
+func NewAccountCommands(updateAccount UpdateAccountCmdHandler, changePassword ChangePasswordCmdHandler, banAccount BanAccountCmdHandler, deleteAccount DeleteAccountCmdHandler) *AccountCommands {
 	return &AccountCommands{
 		UpdateAccount:  updateAccount,
 		ChangePassword: changePassword,
 		BanAccount:     banAccount,
+		DeleteAccount:  deleteAccount,
 	}
 }
 
@@ -38,4 +40,12 @@ type BanAccountCommand struct {
 
 func NewBanAccountCommand(banAccountDto *dto.BanAccount) *BanAccountCommand {
 	return &BanAccountCommand{BanAccountDto: banAccountDto}
+}
+
+type DeleteAccountCommand struct {
+	DeleteAccountDto *dto.DeleteAccountById
+}
+
+func NewDeleteAccountCommand(deleteAccountDto *dto.DeleteAccountById) *DeleteAccountCommand {
+	return &DeleteAccountCommand{DeleteAccountDto: deleteAccountDto}
 }

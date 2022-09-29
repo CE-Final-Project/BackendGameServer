@@ -7,10 +7,14 @@ import (
 	"log"
 )
 
-// @contact.name Poomipat Chuealue
-// @contact.url https://github.com/Poomipat-Ch
-// @contact.email poomipat002@gmail.com
-// @securityDefinitions.apikey BearerAuth
+// @title           			API Gateway Game Server
+// @version         			1.0
+// @description     			API Gateway microservices.
+// @BasePath  					/api/v1
+// @contact.name 				Poomipat Chuealue
+// @contact.url 				https://github.com/Poomipat-Ch
+// @contact.email 				poomipat002@gmail.com
+// @securityDefinitions.apikey 	BearerAuth
 // @in header
 // @name X-AUTH-TOKEN
 func main() {

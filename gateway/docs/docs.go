@@ -170,6 +170,41 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete account by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Delete account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Account ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeleteAccountByIdResponse"
+                        }
+                    }
+                }
             }
         },
         "/login": {
@@ -320,6 +355,20 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.DeleteAccountByIdResponse": {
+            "type": "object",
+            "required": [
+                "account_id"
+            ],
+            "properties": {
+                "account_id": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.LoginAccount": {
             "type": "object",
             "required": [
@@ -435,12 +484,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "1.0",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "API Gateway Game Server",
+	Description:      "API Gateway microservices.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

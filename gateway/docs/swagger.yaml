@@ -1,3 +1,4 @@
+basePath: /api/v1
 definitions:
   dto.AccountResponseDto:
     properties:
@@ -51,6 +52,15 @@ definitions:
     - account_id
     - new_password
     - old_password
+    type: object
+  dto.DeleteAccountByIdResponse:
+    properties:
+      account_id:
+        type: string
+      deleted_at:
+        type: string
+    required:
+    - account_id
     type: object
   dto.LoginAccount:
     properties:
@@ -126,6 +136,9 @@ info:
     email: poomipat002@gmail.com
     name: Poomipat Chuealue
     url: https://github.com/Poomipat-Ch
+  description: API Gateway microservices.
+  title: API Gateway Game Server
+  version: "1.0"
 paths:
   /account:
     put:
@@ -152,6 +165,28 @@ paths:
       tags:
       - Account
   /account/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete account by id
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DeleteAccountByIdResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete account
+      tags:
+      - Account
     get:
       consumes:
       - application/json

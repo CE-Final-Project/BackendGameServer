@@ -195,3 +195,46 @@ func (a *accountHandlers) ChangePassword() echo.HandlerFunc {
 		})
 	}
 }
+
+// DeleteAccount
+// @Tags Account
+// @Summary Delete account
+// @Description Delete account by id
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param        id   path      string  true  "Account ID"
+// @Success 200 {object} dto.DeleteAccountByIdResponse
+// @Router /account/{id} [delete]
+func (a *accountHandlers) DeleteAccount() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ctx, span := tracing.StartHttpServerTracerSpan(c, "accountHandlers.DeleteAccountById")
+		defer span.Finish()
+
+		accountID := c.Param("id")
+
+		userID := c.Request().Header.Get("User-ID")
+
+		if accountID != userID {
+			a.log.WarnMsg("userId and accountId not match", httpErrors.Unauthorized)
+			return httpErrors.ErrorCtxResponse(c, httpErrors.Unauthorized, a.cfg.HTTP.DebugErrorsResponse)
+		}
+
+		accountUUID, err := uuid.FromString(accountID)
+		if err != nil {
+			a.log.WarnMsg("uuid.FromString", errors.Cause(err))
+			return httpErrors.ErrorCtxResponse(c, errors.Cause(err), a.cfg.HTTP.DebugErrorsResponse)
+		}
+		command := commands.NewDeleteAccountCommand(&dto.DeleteAccountById{AccountID: accountUUID})
+
+		err = a.acs.Commands.DeleteAccount.Handle(ctx, command)
+		if err != nil {
+			a.log.WarnMsg("DeleteAccountById", errors.Cause(err))
+			return httpErrors.ErrorCtxResponse(c, errors.Cause(err), a.cfg.HTTP.DebugErrorsResponse)
+		}
+		return c.JSON(http.StatusOK, &dto.DeleteAccountByIdResponse{
+			AccountID: accountUUID,
+			DeletedAt: time.Now(),
+		})
+	}
+}

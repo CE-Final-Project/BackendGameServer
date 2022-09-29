@@ -122,7 +122,7 @@ func (a *postgresRepository) Search(ctx context.Context, search string, paginati
 	span, ctx := opentracing.StartSpanFromContext(ctx, "postgresRepository.Search")
 	defer span.Finish()
 
-	rows, err := a.db.QueryxContext(ctx, searchAccountQuery, search, pagination.GetOrderBy(), pagination.GetLimit(), pagination.GetOffset())
+	rows, err := a.db.QueryxContext(ctx, searchAccountQuery, "%"+search+"%", pagination.GetOrderBy(), pagination.GetLimit(), pagination.GetOffset())
 	if err != nil {
 		return nil, errors.Wrap(err, "QueryxContext Search Account")
 	}

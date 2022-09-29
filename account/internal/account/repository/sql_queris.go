@@ -53,7 +53,7 @@ const (
                       RETURNING account_id, player_id, username, email, password_hashed, is_ban, created_at, updated_at`
 
 	searchAccountQuery = `SELECT count(*) over() as total, a.account_id, a.player_id, a.username, a.email, a.password_hashed, a.is_ban, a.created_at, a.updated_at
-	FROM accounts a WHERE a.username ILIKE '%' + $1 + '%' OR a.player_id = $1 ORDER BY $2 LIMIT $3 OFFSET $4`
+	FROM accounts a WHERE a.username ILIKE $1 OR a.player_id ILIKE $1 ORDER BY $2 LIMIT $3 OFFSET $4`
 
 	getAccountByIdQuery = `SELECT a.account_id, a.player_id, a.username, a.email, a.password_hashed, a.is_ban, a.created_at, a.updated_at
 	FROM accounts a WHERE a.account_id = $1`

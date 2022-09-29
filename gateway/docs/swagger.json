@@ -1,12 +1,16 @@
 {
     "swagger": "2.0",
     "info": {
+        "description": "API Gateway microservices.",
+        "title": "API Gateway Game Server",
         "contact": {
             "name": "Poomipat Chuealue",
             "url": "https://github.com/Poomipat-Ch",
             "email": "poomipat002@gmail.com"
-        }
+        },
+        "version": "1.0"
     },
+    "basePath": "/api/v1",
     "paths": {
         "/account": {
             "put": {
@@ -158,6 +162,41 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete account by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Delete account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Account ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeleteAccountByIdResponse"
+                        }
+                    }
+                }
             }
         },
         "/login": {
@@ -304,6 +343,20 @@
                     "type": "string"
                 },
                 "old_password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.DeleteAccountByIdResponse": {
+            "type": "object",
+            "required": [
+                "account_id"
+            ],
+            "properties": {
+                "account_id": {
+                    "type": "string"
+                },
+                "deleted_at": {
                     "type": "string"
                 }
             }
