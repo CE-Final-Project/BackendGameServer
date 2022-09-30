@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	cfg, err := config.InitConfig()
+	cfg, err := config.InitConfig("")
 	if err != nil {
 		log.Fatal(err)
 	}

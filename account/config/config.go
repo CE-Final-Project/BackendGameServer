@@ -35,10 +35,14 @@ type KafkaTopics struct {
 	AccountDelete   kafka.TopicConfig
 }
 
-func InitConfig() (*Config, error) {
+func InitConfig(path string) (*Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("./config")
+	if path == "" {
+		viper.AddConfigPath("./config")
+	} else {
+		viper.AddConfigPath(path)
+	}
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 

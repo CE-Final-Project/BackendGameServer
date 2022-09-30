@@ -18,7 +18,7 @@ type accountCacheRepository struct {
 	redisClient redis.UniversalClient
 }
 
-func NewAccountCacheRepository(log logger.Logger, redis redis.UniversalClient) *accountCacheRepository {
+func NewAccountCacheRepository(log logger.Logger, redis redis.UniversalClient) CacheRepository {
 	return &accountCacheRepository{
 		log:         log,
 		redisClient: redis,

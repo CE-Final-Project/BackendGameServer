@@ -21,7 +21,7 @@ type createAccountHandler struct {
 	redisRepo    repository.CacheRepository
 }
 
-func NewCreateAccountHandler(log logger.Logger, cfg *config.Config, mongoRepo repository.Repository, redisRepo repository.CacheRepository) *createAccountHandler {
+func NewCreateAccountHandler(log logger.Logger, cfg *config.Config, mongoRepo repository.Repository, redisRepo repository.CacheRepository) CreateAccountCmdHandler {
 	return &createAccountHandler{log: log, cfg: cfg, postgresRepo: mongoRepo, redisRepo: redisRepo}
 }
 
