@@ -1,0 +1,71 @@
+syntax="proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package authentication;
+
+option go_package="./;authService";
+
+message Account{
+  uint64 AccountID = 1;
+  string PlayerID = 2;
+  string Username = 3;
+  string Email = 4;
+  google.protobuf.Timestamp CreatedAt = 8;
+  google.protobuf.Timestamp UpdatedAt = 9;
+}
+
+message ChangePasswordReq{
+  uint64 AccountID = 1;
+  string OldPassword = 2;
+  string NewPassword = 3;
+}
+
+message ChangePasswordRes{
+  uint64 AccountID = 1;
+}
+
+message GetAccountByIdReq{
+  uint64 AccountID = 1;
+}
+
+message GetAccountByIdRes {
+  Account Account = 1;
+}
+
+message GetAccountByUsernameReq{
+  string Username = 1;
+}
+
+message GetAccountByEmailReq{
+  string Email = 1;
+}
+
+message GetAccountByEmailRes{
+  Account Account = 1;
+}
+
+message GetAccountByUsernameRes{
+  Account Account = 1;
+}
+
+message SearchAccountsReq {
+  string Search = 1;
+  int64 page = 2;
+  int64 size = 3;
+}
+
+message SearchAccountsRes {
+  int64 TotalCount = 1;
+  int64 TotalPages = 2;
+  int64 Page = 3;
+  int64 Size = 4;
+  bool HasMore = 5;
+  repeated Account Accounts = 6;
+}
+
+message DeleteAccountByIdReq{
+  uint64 AccountID = 1;
+}
+
+message DeleteAccountByIdRes{}

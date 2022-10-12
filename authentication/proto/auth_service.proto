@@ -1,0 +1,34 @@
+syntax="proto3";
+
+package authentication;
+
+option go_package="./;authService";
+
+import "auth_message.proto";
+import "account_message.proto";
+import "role_message.proto";
+
+service authService {
+  // auth
+  rpc Login(LoginReq) returns (LoginRes);
+  rpc Register(RegisterReq) returns (RegisterRes);
+  rpc VerifyToken(VerifyTokenReq) returns (VerifyTokenRes);
+}
+
+service accountService {
+  // account
+  rpc GetAccountById(GetAccountByIdReq) returns (GetAccountByIdRes);
+  rpc GetAccountByUsername(GetAccountByUsernameReq) returns (GetAccountByUsernameRes);
+  rpc GetAccountByEmail(GetAccountByEmailReq) returns (GetAccountByEmailRes);
+  rpc ChangePassword(ChangePasswordReq) returns (ChangePasswordRes);
+  rpc SearchAccount(SearchAccountsReq) returns (SearchAccountsRes);
+  rpc DeleteAccountById(DeleteAccountByIdReq) returns (DeleteAccountByIdRes);
+}
+
+service roleService {
+  // role
+  rpc CreateRole(CreateRoleReq) returns (CreateRoleRes);
+  rpc UpdateRole(UpdateRoleReq) returns (UpdateRoleRes);
+  rpc SearchRole(SearchRolesReq) returns (SearchRolesRes);
+  rpc DeleteRoleById(DeleteRoleReq) returns (DeleteRoleRes);
+}

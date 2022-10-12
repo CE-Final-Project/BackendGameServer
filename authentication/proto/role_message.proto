@@ -1,0 +1,55 @@
+syntax="proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package authentication;
+
+option go_package="./;authService";
+
+
+message Role {
+  uint64 ID = 1;
+  string Name = 2;
+  google.protobuf.Timestamp CreatedAt = 3;
+  uint64 CreatedBy = 4;
+  google.protobuf.Timestamp UpdatedAt = 5;
+  uint64 UpdatedBy = 6;
+}
+
+message CreateRoleReq {
+  string Name = 2;
+}
+
+message CreateRoleRes{
+  Role role = 1;
+}
+
+message UpdateRoleReq{
+  uint64 ID = 1;
+  string Name = 2;
+}
+
+message UpdateRoleRes {
+  Role role = 1;
+}
+
+message DeleteRoleReq{
+  uint64 ID = 1;
+}
+
+message DeleteRoleRes {}
+
+message SearchRolesReq {
+  string Search = 1;
+  int64 page = 2;
+  int64 size = 3;
+}
+
+message SearchRolesRes {
+  int64 TotalCount = 1;
+  int64 TotalPages = 2;
+  int64 Page = 3;
+  int64 Size = 4;
+  bool HasMore = 5;
+  repeated Role Roles = 6;
+}

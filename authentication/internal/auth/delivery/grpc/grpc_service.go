@@ -4,10 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"github.com/ce-final-project/backend_game_server/authentication/config"
+	accountService "github.com/ce-final-project/backend_game_server/authentication/internal/account/service"
 	"github.com/ce-final-project/backend_game_server/authentication/internal/auth/commands"
 	"github.com/ce-final-project/backend_game_server/authentication/internal/auth/queries"
-	"github.com/ce-final-project/backend_game_server/authentication/internal/auth/service"
-	authService "github.com/ce-final-project/backend_game_server/authentication/proto"
+	authService "github.com/ce-final-project/backend_game_server/authentication/internal/auth/service"
+	authGRPCService "github.com/ce-final-project/backend_game_server/authentication/proto"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/ce-final-project/backend_game_server/pkg/tracing"
 	"github.com/ce-final-project/backend_game_server/pkg/utils"
@@ -26,26 +27,35 @@ type grpcService struct {
 	log logger.Logger
 	cfg *config.Config
 	v   *validator.Validate
-	as  *service.AuthService
+	as  *authService.AuthService
+	acc *accountService.AccountService
 }
 
-func NewGrpcService(log logger.Logger, cfg *config.Config, v *validator.Validate, as *service.AuthService) *grpcService {
+func NewGrpcService(log logger.Logger, cfg *config.Config, v *validator.Validate, as *authService.AuthService, acc *accountService.AccountService) authGRPCService.AuthServiceServer {
 	return &grpcService{
 		log: log,
 		cfg: cfg,
 		v:   v,
 		as:  as,
+		acc: acc,
 	}
 }
 
-func (g *grpcService) Login(ctx context.Context, req *authService.LoginReq) (*authService.LoginRes, error) {
+func (g *grpcService) Login(ctx context.Context, req *authGRPCService.LoginReq) (*authGRPCService.LoginRes, error) {
 	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.LoginAccount")
 	defer span.Finish()
 
-	query := queries.NewGetAccountByUsernameQuery(req.GetUsername())
-	if err := g.v.StructCtx(ctx, query); err != nil {
-		g.log.WarnMsg("validate", err)
-		return nil, g.errResponse(codes.InvalidArgument, err)
+	isEmail := g.isEmail(ctx, &isEmail{email: req.GetUsername()})
+
+	var query interface{}
+	if isEmail {
+		query := queries.NewGet
+	} else {
+		query := queries.NewGetAccountByUsernameQuery(req.GetUsername())
+		if err := g.v.StructCtx(ctx, query); err != nil {
+			g.log.WarnMsg("validate", err)
+			return nil, g.errResponse(codes.InvalidArgument, err)
+		}
 	}
 
 	account, err := g.as.Queries.GetAccountByUsername.Handle(ctx, query)
@@ -66,14 +76,14 @@ func (g *grpcService) Login(ctx context.Context, req *authService.LoginReq) (*au
 		return nil, g.errResponse(codes.Internal, err)
 	}
 
-	return &authService.LoginRes{
+	return &authGRPCService.LoginRes{
 		Token:     token,
 		AccountID: account.GetAccountID(),
 		PlayerID:  account.GetPlayerID(),
 	}, nil
 }
 
-func (g *grpcService) Register(ctx context.Context, req *authService.RegisterReq) (*authService.RegisterRes, error) {
+func (g *grpcService) Register(ctx context.Context, req *authGRPCService.RegisterReq) (*authGRPCService.RegisterRes, error) {
 	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.RegisterAccount")
 	defer span.Finish()
 
@@ -112,18 +122,18 @@ func (g *grpcService) Register(ctx context.Context, req *authService.RegisterReq
 		g.log.WarnMsg("GenerateJWTToken", err)
 		return nil, g.errResponse(codes.Internal, err)
 	}
-	return &authService.RegisterRes{
+	return &authGRPCService.RegisterRes{
 		Token:     token,
 		AccountID: accountUUID.String(),
 		PlayerID:  playerID,
 	}, nil
 }
 
-func (g *grpcService) VerifyToken(ctx context.Context, req *authService.VerifyTokenReq) (*authService.VerifyTokenRes, error) {
+func (g *grpcService) VerifyToken(ctx context.Context, req *authGRPCService.VerifyTokenReq) (*authGRPCService.VerifyTokenRes, error) {
 	result, err := g.validateToken(req.GetToken())
 	if err != nil {
 		g.log.Error(err)
-		return &authService.VerifyTokenRes{
+		return &authGRPCService.VerifyTokenRes{
 			Valid:     false,
 			AccountID: "",
 			PlayerID:  "",
@@ -140,7 +150,7 @@ func (g *grpcService) VerifyToken(ctx context.Context, req *authService.VerifyTo
 		return nil, g.errResponse(codes.Internal, err)
 	}
 	if account == nil {
-		return &authService.VerifyTokenRes{
+		return &authGRPCService.VerifyTokenRes{
 			Valid:     false,
 			AccountID: "",
 			PlayerID:  "",
@@ -163,7 +173,7 @@ func (g *grpcService) generateJwtToken(accountID string, playerID string) (strin
 	return tokenStr, nil
 }
 
-func (g *grpcService) validateToken(tokenString string) (*authService.VerifyTokenRes, error) {
+func (g *grpcService) validateToken(tokenString string) (*authGRPCService.VerifyTokenRes, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("jwt.Parse.Token.Method")
@@ -171,20 +181,20 @@ func (g *grpcService) validateToken(tokenString string) (*authService.VerifyToke
 		return []byte(g.cfg.JWT.Secret), nil
 	})
 	if err != nil {
-		return &authService.VerifyTokenRes{
+		return &authGRPCService.VerifyTokenRes{
 			Valid:     false,
 			AccountID: "",
 			PlayerID:  "",
 		}, nil
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		return &authService.VerifyTokenRes{
+		return &authGRPCService.VerifyTokenRes{
 			Valid:     true,
 			AccountID: claims["id"].(string),
 			PlayerID:  claims["player_id"].(string),
 		}, nil
 	} else {
-		return &authService.VerifyTokenRes{
+		return &authGRPCService.VerifyTokenRes{
 			Valid:     false,
 			AccountID: "",
 			PlayerID:  "",
@@ -194,4 +204,15 @@ func (g *grpcService) validateToken(tokenString string) (*authService.VerifyToke
 
 func (g *grpcService) errResponse(c codes.Code, err error) error {
 	return status.Error(c, err.Error())
+}
+
+type isEmail struct {
+	email string `validate:"required,email,max=320"`
+}
+
+func (g *grpcService) isEmail(ctx context.Context, isEmail *isEmail) bool {
+	if err := g.v.StructCtx(ctx, isEmail); err != nil {
+		return false
+	}
+	return true
 }

@@ -12,7 +12,6 @@ import (
 	"github.com/ce-final-project/backend_game_server/pkg/tracing"
 	"github.com/ce-final-project/backend_game_server/pkg/utils"
 	"github.com/go-playground/validator"
-	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
@@ -208,7 +207,7 @@ func (a *accountHandlers) ChangePassword() echo.HandlerFunc {
 // @Router /account/{id} [delete]
 func (a *accountHandlers) DeleteAccount() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		ctx, span := tracing.StartHttpServerTracerSpan(c, "accountHandlers.DeleteAccountById")
+		ctx, span := tracing.StartHttpServerTracerSpan(c, "accountHandlers.DeleteAccountByID")
 		defer span.Finish()
 
 		accountID := c.Param("id")
@@ -229,7 +228,7 @@ func (a *accountHandlers) DeleteAccount() echo.HandlerFunc {
 
 		err = a.acs.Commands.DeleteAccount.Handle(ctx, command)
 		if err != nil {
-			a.log.WarnMsg("DeleteAccountById", errors.Cause(err))
+			a.log.WarnMsg("DeleteAccountByID", errors.Cause(err))
 			return httpErrors.ErrorCtxResponse(c, errors.Cause(err), a.cfg.HTTP.DebugErrorsResponse)
 		}
 		return c.JSON(http.StatusOK, &dto.DeleteAccountByIdResponse{

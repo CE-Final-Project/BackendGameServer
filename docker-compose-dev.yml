@@ -2,7 +2,6 @@ version: '3.9'
 services:
   gateway_service:
     container_name: gateway_service
-#    image: kenta420/dev-backend-game-server-gateway_service:latest
     build:
       context: .
       dockerfile: Docker/gateway.Dockerfile
@@ -17,7 +16,6 @@ services:
       - "8001:8001"
   auth_service:
     container_name: auth_service
-#    image: kenta420/dev-backend-game-server-auth_service
     build:
       context: .
       dockerfile: Docker/auth.Dockerfile
@@ -34,7 +32,6 @@ services:
       - "5003:5003"
   account_service:
     container_name: "account_service"
-#    image: kenta420/dev-backend-game-server-account_service
     build:
       context: .
       dockerfile: Docker/account.Dockerfile
