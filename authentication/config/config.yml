@@ -32,6 +32,13 @@ kafkaTopics:
     topicName: accountDelete
     partitions: 10
     replicationFactor: 1
+postgres:
+  driver: "postgres"
+  host: "database"
+  port: 5432
+  user: account
+  password: "3uP*SHMmk$*ri"
+  dbName: account_db
 redis:
   addr: "redis:6379"
   password: "zwLKq&KHb2HhphJF"

@@ -140,7 +140,7 @@ var file_auth_service_proto_depIdxs = []int32{
 	5,  // 5: authentication.accountService.GetAccountByEmail:input_type -> authentication.GetAccountByEmailReq
 	6,  // 6: authentication.accountService.ChangePassword:input_type -> authentication.ChangePasswordReq
 	7,  // 7: authentication.accountService.SearchAccount:input_type -> authentication.SearchAccountsReq
-	8,  // 8: authentication.accountService.DeleteAccountByID:input_type -> authentication.DeleteAccountByIdReq
+	8,  // 8: authentication.accountService.DeleteAccountById:input_type -> authentication.DeleteAccountByIdReq
 	9,  // 9: authentication.roleService.CreateRole:input_type -> authentication.CreateRoleReq
 	10, // 10: authentication.roleService.UpdateRole:input_type -> authentication.UpdateRoleReq
 	11, // 11: authentication.roleService.SearchRole:input_type -> authentication.SearchRolesReq
@@ -153,7 +153,7 @@ var file_auth_service_proto_depIdxs = []int32{
 	18, // 18: authentication.accountService.GetAccountByEmail:output_type -> authentication.GetAccountByEmailRes
 	19, // 19: authentication.accountService.ChangePassword:output_type -> authentication.ChangePasswordRes
 	20, // 20: authentication.accountService.SearchAccount:output_type -> authentication.SearchAccountsRes
-	21, // 21: authentication.accountService.DeleteAccountByID:output_type -> authentication.DeleteAccountByIdRes
+	21, // 21: authentication.accountService.DeleteAccountById:output_type -> authentication.DeleteAccountByIdRes
 	22, // 22: authentication.roleService.CreateRole:output_type -> authentication.CreateRoleRes
 	23, // 23: authentication.roleService.UpdateRole:output_type -> authentication.UpdateRoleRes
 	24, // 24: authentication.roleService.SearchRole:output_type -> authentication.SearchRolesRes

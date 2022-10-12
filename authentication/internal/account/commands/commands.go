@@ -15,13 +15,15 @@ func NewAccountCommands(
 }
 
 type CreateAccountCommand struct {
+	PlayerID string `json:"player_id,omitempty" validate:"required,max=15"`
 	Username string `json:"username,omitempty" validate:"required,min=3,max=250"`
 	Email    string `json:"email,omitempty" validate:"required,email,max=320"`
 	Password string `json:"password,omitempty" validate:"required,min=8,max=100"`
 }
 
-func NewCreateAccountCommand(username, email, password string) *CreateAccountCommand {
+func NewCreateAccountCommand(playerID, username, email, password string) *CreateAccountCommand {
 	return &CreateAccountCommand{
+		PlayerID: playerID,
 		Username: username,
 		Email:    email,
 		Password: password,

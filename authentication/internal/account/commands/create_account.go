@@ -13,7 +13,7 @@ import (
 )
 
 type CreateAccountCmdHandler interface {
-	Handle(ctx context.Context, command *CreateAccountCommand) error
+	Handle(ctx context.Context, command *CreateAccountCommand) (*models.Account, error)
 }
 
 type createAccountHandler struct {
@@ -27,26 +27,27 @@ func NewCreateAccountHandler(log logger.Logger, cfg *config.Config, accountRepo 
 	return &createAccountHandler{log: log, cfg: cfg, accountRepo: accountRepo, cacheRepo: cacheRepo}
 }
 
-func (c *createAccountHandler) Handle(ctx context.Context, command *CreateAccountCommand) error {
+func (c *createAccountHandler) Handle(ctx context.Context, command *CreateAccountCommand) (*models.Account, error) {
 	var span opentracing.Span
 	span, ctx = opentracing.StartSpanFromContext(ctx, "createAccountHandler.Handle")
 	defer span.Finish()
 
 	passwordHashed, err := utils.HashPassword(command.Password)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	account := &models.Account{
+		PlayerID:       command.PlayerID,
 		Username:       command.Username,
 		Email:          command.Email,
 		PasswordHashed: passwordHashed,
 	}
 	account, err = c.accountRepo.InsertAccount(ctx, account)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	c.cacheRepo.PutAccount(ctx, strconv.FormatUint(account.ID, 10), account)
-	return nil
+	return account, nil
 }

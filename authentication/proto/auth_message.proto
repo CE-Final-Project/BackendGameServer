@@ -10,7 +10,7 @@ message VerifyTokenReq {
 
 message VerifyTokenRes{
   bool Valid = 1;
-  string AccountID = 2;
+  uint64 AccountID = 2;
   string PlayerID = 3;
 }
 
@@ -21,7 +21,7 @@ message LoginReq {
 
 message LoginRes{
   string Token = 1;
-  string AccountID = 2;
+  uint64 AccountID = 2;
   string PlayerID = 3;
 }
 
@@ -33,6 +33,6 @@ message RegisterReq {
 
 message RegisterRes {
   string Token = 1;
-  string AccountID = 2;
+  uint64 AccountID = 2;
   string PlayerID = 3;
 }

@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func (s *server) connectKafkaBrokers(ctx context.Context) error {
+func (s *Server) connectKafkaBrokers(ctx context.Context) error {
 	kafkaConn, err := kafkaClient.NewKafkaConn(ctx, s.cfg.Kafka)
 	if err != nil {
 		return errors.Wrap(err, "kafka.NewKafkaCon")
@@ -27,7 +27,7 @@ func (s *server) connectKafkaBrokers(ctx context.Context) error {
 	return nil
 }
 
-func (s *server) initKafkaTopics(ctx context.Context) {
+func (s *Server) initKafkaTopics(ctx context.Context) {
 	controller, err := s.kafkaConn.Controller()
 	if err != nil {
 		s.log.WarnMsg("kafkaConn.Controller", err)

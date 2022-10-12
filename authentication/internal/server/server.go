@@ -2,57 +2,66 @@ package server
 
 import (
 	"context"
-	accountService "github.com/ce-final-project/backend_game_server/account/proto"
 	"github.com/ce-final-project/backend_game_server/authentication/config"
-	"github.com/ce-final-project/backend_game_server/authentication/internal/auth/service"
-	"github.com/ce-final-project/backend_game_server/authentication/internal/client"
+	accountRepository "github.com/ce-final-project/backend_game_server/authentication/internal/account/repository"
+	accountService "github.com/ce-final-project/backend_game_server/authentication/internal/account/service"
 	kafkaClient "github.com/ce-final-project/backend_game_server/pkg/kafka"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
+	"github.com/ce-final-project/backend_game_server/pkg/postgres"
+	redisClient "github.com/ce-final-project/backend_game_server/pkg/redis"
 	"github.com/go-playground/validator"
+	"github.com/go-redis/redis/v8"
+	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/segmentio/kafka-go"
-	"google.golang.org/grpc"
 	"os"
 	"os/signal"
 	"syscall"
 )
 
-type server struct {
-	log       logger.Logger
-	cfg       *config.Config
-	v         *validator.Validate
-	as        *service.AuthService
-	kafkaConn *kafka.Conn
+type Server struct {
+	log         logger.Logger
+	cfg         *config.Config
+	v           *validator.Validate
+	acc         *accountService.AccountService
+	db          *sqlx.DB
+	redisClient redis.UniversalClient
+	kafkaConn   *kafka.Conn
 }
 
-func NewServer(log logger.Logger, cfg *config.Config) *server {
-	return &server{
+func NewServer(log logger.Logger, cfg *config.Config) *Server {
+	return &Server{
 		log: log,
 		v:   validator.New(),
 		cfg: cfg,
 	}
 }
 
-func (s *server) Run() error {
+func (s *Server) Run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 
-	accountServiceConn, err := client.NewAccountServiceConn(ctx, s.cfg)
+	// TODO: init db and repository
+
+	db, err := postgres.NewPostgresDatabase(s.cfg.Postgres)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "postgres.NewPostgresDatabase")
 	}
-	defer func(accountServiceConn *grpc.ClientConn) {
-		err := accountServiceConn.Close()
-		if err != nil {
-			s.log.WarnMsg("close accountServiceConn", err)
-		}
-	}(accountServiceConn)
-	asClient := accountService.NewAccountServiceClient(accountServiceConn)
+	s.log.Infof("postgres connected: %v", db.Stats().OpenConnections)
+	s.db = db
+	defer s.db.Close()
+
+	s.redisClient = redisClient.NewUniversalRedisClient(s.cfg.Redis)
+	defer s.redisClient.Close()
+	s.log.Infof("Redis connected: %+v", s.redisClient.PoolStats())
+
+	accountRepo := accountRepository.NewAccountRepository(s.db, s.log)
+	cacheRepo := accountRepository.NewCacheRepository(s.redisClient, s.log)
 
 	kafkaProducer := kafkaClient.NewProducer(s.log, s.cfg.Kafka.Brokers)
 	defer kafkaProducer.Close()
 
-	s.as = service.NewAuthService(s.log, s.cfg, kafkaProducer, asClient)
+	s.acc = accountService.NewAccountService(s.log, s.cfg, accountRepo, cacheRepo)
 
 	if err := s.connectKafkaBrokers(ctx); err != nil {
 		return errors.Wrap(err, "s.connectKafkaBrokers")

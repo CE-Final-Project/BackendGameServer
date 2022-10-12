@@ -1,7 +1,8 @@
 package server
 
 import (
-	grpcDelivery "github.com/ce-final-project/backend_game_server/authentication/internal/auth/delivery/grpc"
+	grpcAccountDelivery "github.com/ce-final-project/backend_game_server/authentication/internal/account/delivery/grpc"
+	grpcAuthDelivery "github.com/ce-final-project/backend_game_server/authentication/internal/auth/delivery/grpc"
 	authService "github.com/ce-final-project/backend_game_server/authentication/proto"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
@@ -18,7 +19,7 @@ const (
 	gRPCTime          = 10
 )
 
-func (s *server) NewAuthGrpcServer() (func() error, *grpc.Server, error) {
+func (s *Server) NewAuthGrpcServer() (func() error, *grpc.Server, error) {
 	l, err := net.Listen("tcp", s.cfg.GRPC.Port)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "net.Listen")
@@ -33,8 +34,11 @@ func (s *server) NewAuthGrpcServer() (func() error, *grpc.Server, error) {
 		}),
 	)
 
-	grpcService := grpcDelivery.NewGrpcService(s.log, s.cfg, s.v, s.as)
-	authService.RegisterAuthServiceServer(grpcServer, grpcService)
+	grpcAuthService := grpcAuthDelivery.NewAuthGRPCService(s.log, s.cfg, s.v, s.acc)
+	authService.RegisterAuthServiceServer(grpcServer, grpcAuthService)
+
+	grpcAccountService := grpcAccountDelivery.NewAccountGRPCService(s.log, s.cfg, s.v, s.acc)
+	authService.RegisterAccountServiceServer(grpcServer, grpcAccountService)
 
 	if s.cfg.GRPC.Development {
 		reflection.Register(grpcServer)

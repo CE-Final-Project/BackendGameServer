@@ -4,22 +4,23 @@ import (
 	"context"
 	"database/sql"
 	"github.com/ce-final-project/backend_game_server/authentication/config"
+	accountCommands "github.com/ce-final-project/backend_game_server/authentication/internal/account/commands"
+	accountQueries "github.com/ce-final-project/backend_game_server/authentication/internal/account/queries"
 	accountService "github.com/ce-final-project/backend_game_server/authentication/internal/account/service"
-	"github.com/ce-final-project/backend_game_server/authentication/internal/auth/commands"
-	"github.com/ce-final-project/backend_game_server/authentication/internal/auth/queries"
-	authService "github.com/ce-final-project/backend_game_server/authentication/internal/auth/service"
+	"github.com/ce-final-project/backend_game_server/authentication/internal/models"
 	authGRPCService "github.com/ce-final-project/backend_game_server/authentication/proto"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/ce-final-project/backend_game_server/pkg/tracing"
 	"github.com/ce-final-project/backend_game_server/pkg/utils"
 	"github.com/go-playground/validator"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
 	"github.com/speps/go-hashids/v2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -27,50 +28,66 @@ type grpcService struct {
 	log logger.Logger
 	cfg *config.Config
 	v   *validator.Validate
-	as  *authService.AuthService
 	acc *accountService.AccountService
 }
 
-func NewGrpcService(log logger.Logger, cfg *config.Config, v *validator.Validate, as *authService.AuthService, acc *accountService.AccountService) authGRPCService.AuthServiceServer {
+func NewAuthGRPCService(log logger.Logger, cfg *config.Config, v *validator.Validate, acc *accountService.AccountService) authGRPCService.AuthServiceServer {
 	return &grpcService{
 		log: log,
 		cfg: cfg,
 		v:   v,
-		as:  as,
 		acc: acc,
 	}
 }
 
 func (g *grpcService) Login(ctx context.Context, req *authGRPCService.LoginReq) (*authGRPCService.LoginRes, error) {
-	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.LoginAccount")
+	var span opentracing.Span
+	ctx, span = tracing.StartGrpcServerTracerSpan(ctx, "grpcService.LoginAccount")
 	defer span.Finish()
 
 	isEmail := g.isEmail(ctx, &isEmail{email: req.GetUsername()})
 
-	var query interface{}
+	var account *models.Account
+
 	if isEmail {
-		query := queries.NewGet
-	} else {
-		query := queries.NewGetAccountByUsernameQuery(req.GetUsername())
+		query := accountQueries.NewGetAccountByEmailQuery(req.GetUsername())
 		if err := g.v.StructCtx(ctx, query); err != nil {
 			g.log.WarnMsg("validate", err)
 			return nil, g.errResponse(codes.InvalidArgument, err)
 		}
-	}
-
-	account, err := g.as.Queries.GetAccountByUsername.Handle(ctx, query)
-	if err != nil {
-		g.log.WarnMsg("Register.Handle", err)
-		return nil, g.errResponse(codes.Internal, err)
+		var err error
+		account, err = g.acc.Queries.GetAccountByEmail.Handle(ctx, query)
+		if err != nil {
+			g.log.WarnMsg("Register.Handle", err)
+			if errors.Cause(err) == sql.ErrNoRows {
+				return nil, g.errResponse(codes.NotFound, err)
+			}
+			return nil, g.errResponse(codes.Internal, err)
+		}
+	} else {
+		query := accountQueries.NewGetAccountByUsernameQuery(req.GetUsername())
+		if err := g.v.StructCtx(ctx, query); err != nil {
+			g.log.WarnMsg("validate", err)
+			return nil, g.errResponse(codes.InvalidArgument, err)
+		}
+		var err error
+		account, err = g.acc.Queries.GetAccountByUsername.Handle(ctx, query)
+		if err != nil {
+			g.log.WarnMsg("Register.Handle", err)
+			if errors.Cause(err) == sql.ErrNoRows {
+				return nil, g.errResponse(codes.NotFound, err)
+			}
+			return nil, g.errResponse(codes.Internal, err)
+		}
 	}
 
 	if !utils.CheckPasswordHash(req.GetPassword(), account.PasswordHashed) {
-		err = errors.New("Invalid Username or Password")
+		err := errors.New("Invalid Username or Password")
 		g.log.WarnMsg("Unauthenticated", err)
 		return nil, g.errResponse(codes.Unauthenticated, err)
 	}
 
-	token, err := g.generateJwtToken(account.GetAccountID(), account.GetPlayerID())
+	token, err := g.generateJwtToken(strconv.FormatUint(account.ID, 10), account.PlayerID)
 	if err != nil {
 		g.log.WarnMsg("GenerateJWTToken", err)
 		return nil, g.errResponse(codes.Internal, err)
@@ -78,17 +95,15 @@ func (g *grpcService) Login(ctx context.Context, req *authGRPCService.LoginReq) 
 
 	return &authGRPCService.LoginRes{
 		Token:     token,
-		AccountID: account.GetAccountID(),
-		PlayerID:  account.GetPlayerID(),
+		AccountID: account.ID,
+		PlayerID:  account.PlayerID,
 	}, nil
 }
 
 func (g *grpcService) Register(ctx context.Context, req *authGRPCService.RegisterReq) (*authGRPCService.RegisterRes, error) {
-	ctx, span := tracing.StartGrpcServerTracerSpan(ctx, "grpcService.RegisterAccount")
+	var span opentracing.Span
+	ctx, span = tracing.StartGrpcServerTracerSpan(ctx, "grpcService.RegisterAccount")
 	defer span.Finish()
-
-	// Account UUID
-	accountUUID := uuid.NewV4()
 
 	// Player Short ID
 	hd := hashids.NewData()
@@ -97,64 +112,61 @@ func (g *grpcService) Register(ctx context.Context, req *authGRPCService.Registe
 	h, err := hashids.NewWithData(hd)
 	if err != nil {
 		g.log.WarnMsg("hashIds.NewWithData", err)
-		return nil, err
+		return nil, g.errResponse(codes.Internal, err)
 	}
 	var playerID string
 	playerID, err = h.Encode([]int{rand.Intn(5000)})
 	if err != nil {
 		g.log.WarnMsg("h.Encode", err)
-		return nil, err
+		return nil, g.errResponse(codes.Internal, err)
 	}
 
-	command := commands.NewRegisterCommand(accountUUID, playerID, req.GetUsername(), req.GetEmail(), req.GetPassword())
+	command := accountCommands.NewCreateAccountCommand(playerID, req.GetUsername(), req.GetEmail(), req.GetPassword())
 	if err := g.v.StructCtx(ctx, command); err != nil {
 		g.log.WarnMsg("validate", err)
 		return nil, g.errResponse(codes.InvalidArgument, err)
 	}
-
-	err = g.as.Commands.Register.Handle(ctx, command)
+	var account *models.Account
+	account, err = g.acc.Commands.CreateAccount.Handle(ctx, command)
 	if err != nil {
 		g.log.WarnMsg("Register.Handle", err)
 		return nil, g.errResponse(codes.Internal, err)
 	}
-	token, err := g.generateJwtToken(accountUUID.String(), playerID)
+	var token string
+	token, err = g.generateJwtToken(strconv.FormatUint(account.ID, 10), account.PlayerID)
 	if err != nil {
 		g.log.WarnMsg("GenerateJWTToken", err)
 		return nil, g.errResponse(codes.Internal, err)
 	}
 	return &authGRPCService.RegisterRes{
 		Token:     token,
-		AccountID: accountUUID.String(),
-		PlayerID:  playerID,
+		AccountID: account.ID,
+		PlayerID:  account.PlayerID,
 	}, nil
 }
 
 func (g *grpcService) VerifyToken(ctx context.Context, req *authGRPCService.VerifyTokenReq) (*authGRPCService.VerifyTokenRes, error) {
+	var span opentracing.Span
+	ctx, span = tracing.StartGrpcServerTracerSpan(ctx, "grpcService.VerifyToken")
+	defer span.Finish()
+
 	result, err := g.validateToken(req.GetToken())
 	if err != nil {
 		g.log.Error(err)
-		return &authGRPCService.VerifyTokenRes{
-			Valid:     false,
-			AccountID: "",
-			PlayerID:  "",
-		}, status.Error(codes.InvalidArgument, "token validation error")
+		return nil, g.errResponse(codes.Unauthenticated, err)
 	}
-
-	query := queries.NewGetAccountByIdQuery(result.GetAccountID())
-	account, err := g.as.Queries.GetAccountById.Handle(ctx, query)
+	var account *models.Account
+	query := accountQueries.NewGetAccountByIdQuery(result.GetAccountID())
+	account, err = g.acc.Queries.GetAccountById.Handle(ctx, query)
 	if err != nil {
 		g.log.WarnMsg("GetAccount_VerifyToken.Handle", err)
 		if errors.Cause(err) == sql.ErrNoRows {
-			return nil, g.errResponse(codes.NotFound, err)
+			return nil, g.errResponse(codes.Unauthenticated, err)
 		}
 		return nil, g.errResponse(codes.Internal, err)
 	}
 	if account == nil {
-		return &authGRPCService.VerifyTokenRes{
-			Valid:     false,
-			AccountID: "",
-			PlayerID:  "",
-		}, g.errResponse(codes.Unauthenticated, err)
+		return nil, g.errResponse(codes.Unauthenticated, err)
 	}
 
 	return result, nil
@@ -181,24 +193,16 @@ func (g *grpcService) validateToken(tokenString string) (*authGRPCService.Verify
 		return []byte(g.cfg.JWT.Secret), nil
 	})
 	if err != nil {
-		return &authGRPCService.VerifyTokenRes{
-			Valid:     false,
-			AccountID: "",
-			PlayerID:  "",
-		}, nil
+		return nil, err
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return &authGRPCService.VerifyTokenRes{
 			Valid:     true,
-			AccountID: claims["id"].(string),
+			AccountID: claims["id"].(uint64),
 			PlayerID:  claims["player_id"].(string),
 		}, nil
 	} else {
-		return &authGRPCService.VerifyTokenRes{
-			Valid:     false,
-			AccountID: "",
-			PlayerID:  "",
-		}, nil
+		return nil, errors.New("Invalid Token")
 	}
 }
 
