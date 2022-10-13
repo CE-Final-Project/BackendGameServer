@@ -1,7 +1,6 @@
 serviceName: "gateway_service"
 grpc:
   authServicePort: auth_service:5003
-  accountServicePort: account_service:5004
 logger:
   level: debug
   devMode: false

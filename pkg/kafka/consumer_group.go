@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"context"
-	"github.com/ce-final-project/backend_rest_api/pkg/logger"
+	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/compress"
 	"sync"

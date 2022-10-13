@@ -13,13 +13,13 @@ import (
 const (
 	maxHeaderBytes = 1 << 20
 	stackSize      = 1 << 10 // 1 KB
-	bodyLimit      = "2M"
+	bodyLimit      = "1M"
 	readTimeout    = 15 * time.Second
 	writeTimeout   = 15 * time.Second
 	gzipLevel      = 5
 )
 
-func (s *server) runHttpServer() error {
+func (s *Server) runHttpServer() error {
 	s.mapRoutes()
 
 	s.echo.Server.ReadTimeout = readTimeout
@@ -29,7 +29,7 @@ func (s *server) runHttpServer() error {
 	return s.echo.Start(s.cfg.HTTP.Port)
 }
 
-func (s *server) mapRoutes() {
+func (s *Server) mapRoutes() {
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Title = "API Gateway Game Server"
 	docs.SwaggerInfo.Description = "API Gateway microservices."
@@ -39,6 +39,10 @@ func (s *server) mapRoutes() {
 	s.echo.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	s.echo.Use(s.mw.RequestLoggerMiddleware)
+	s.echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowCredentials: true,
+	}))
 	s.echo.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
 		StackSize:         stackSize,
 		DisablePrintStack: true,

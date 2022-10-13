@@ -3,6 +3,8 @@ package config
 import (
 	kafkaClient "github.com/ce-final-project/backend_game_server/pkg/kafka"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
+	"github.com/ce-final-project/backend_game_server/pkg/postgres"
+	"github.com/ce-final-project/backend_game_server/pkg/redis"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"strings"
@@ -15,6 +17,8 @@ type Config struct {
 	GRPC        GRPC
 	Kafka       *kafkaClient.Config
 	KafkaTopics KafkaTopics
+	Postgres    *postgres.Config
+	Redis       *redis.Config
 	JWT         JWT
 }
 

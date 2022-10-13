@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"github.com/ce-final-project/backend_rest_api/pkg/constants"
+	"github.com/ce-final-project/backend_game_server/pkg/constants"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
