@@ -1,72 +1,14 @@
 basePath: /api/v1
 definitions:
-  dto.AccountResponseDto:
-    properties:
-      account_id:
-        type: string
-      created_at:
-        type: string
-      email:
-        type: string
-      is_ban:
-        type: boolean
-      player_id:
-        type: string
-      updated_at:
-        type: string
-      username:
-        type: string
-    required:
-    - account_id
-    - email
-    - is_ban
-    - player_id
-    - username
-    type: object
-  dto.AccountsListResponseDto:
-    properties:
-      accounts:
-        items:
-          $ref: '#/definitions/dto.AccountResponseDto'
-        type: array
-      hasMore:
-        type: boolean
-      page:
-        type: integer
-      size:
-        type: integer
-      totalCount:
-        type: integer
-      totalPages:
-        type: integer
-    type: object
-  dto.ChangePassword:
-    properties:
-      account_id:
-        type: string
-      new_password:
-        type: string
-      old_password:
-        type: string
-    required:
-    - account_id
-    - new_password
-    - old_password
-    type: object
-  dto.DeleteAccountByIdResponse:
-    properties:
-      account_id:
-        type: string
-      deleted_at:
-        type: string
-    required:
-    - account_id
-    type: object
   dto.LoginAccount:
     properties:
       password:
+        maxLength: 100
+        minLength: 8
         type: string
       username:
+        maxLength: 50
+        minLength: 3
         type: string
     required:
     - password
@@ -75,7 +17,7 @@ definitions:
   dto.LoginAccountResponse:
     properties:
       account_id:
-        type: string
+        type: integer
       player_id:
         type: string
       token:
@@ -88,10 +30,15 @@ definitions:
   dto.RegisterAccount:
     properties:
       email:
+        maxLength: 320
         type: string
       password:
+        maxLength: 100
+        minLength: 8
         type: string
       username:
+        maxLength: 50
+        minLength: 3
         type: string
     required:
     - email
@@ -101,7 +48,7 @@ definitions:
   dto.RegisterAccountResponse:
     properties:
       account_id:
-        type: string
+        type: integer
       player_id:
         type: string
       token:
@@ -110,26 +57,6 @@ definitions:
     - account_id
     - player_id
     - token
-    type: object
-  dto.UpdateAccount:
-    properties:
-      account_id:
-        type: string
-      email:
-        type: string
-      username:
-        type: string
-    required:
-    - account_id
-    type: object
-  dto.UpdateAccountResponse:
-    properties:
-      account_id:
-        type: string
-      updated_at:
-        type: string
-    required:
-    - account_id
     type: object
 info:
   contact:
@@ -140,122 +67,6 @@ info:
   title: API Gateway Game Server
   version: "1.0"
 paths:
-  /account:
-    put:
-      consumes:
-      - application/json
-      description: 'Update account: username or email'
-      parameters:
-      - description: Update body request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.UpdateAccount'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.UpdateAccountResponse'
-      security:
-      - BearerAuth: []
-      summary: Update account
-      tags:
-      - Account
-  /account/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete account by id
-      parameters:
-      - description: Account ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.DeleteAccountByIdResponse'
-      security:
-      - BearerAuth: []
-      summary: Delete account
-      tags:
-      - Account
-    get:
-      consumes:
-      - application/json
-      description: Get all information Account by ID
-      parameters:
-      - description: Account ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.AccountResponseDto'
-      security:
-      - BearerAuth: []
-      summary: Account information by ID
-      tags:
-      - Account
-  /account/password:
-    put:
-      consumes:
-      - application/json
-      description: Update password account
-      parameters:
-      - description: ChangePassword body request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ChangePassword'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.UpdateAccountResponse'
-      security:
-      - BearerAuth: []
-      summary: Change password account
-      tags:
-      - Account
-  /account/search:
-    get:
-      consumes:
-      - application/json
-      description: Search Account with Username
-      parameters:
-      - description: Username
-        in: query
-        name: text
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.AccountsListResponseDto'
-      security:
-      - BearerAuth: []
-      summary: Search Account
-      tags:
-      - Account
   /login:
     post:
       consumes:

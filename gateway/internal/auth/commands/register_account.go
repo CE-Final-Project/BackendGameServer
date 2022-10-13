@@ -6,7 +6,6 @@ import (
 	"github.com/ce-final-project/backend_game_server/gateway/config"
 	"github.com/ce-final-project/backend_game_server/gateway/internal/dto"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
-	uuid "github.com/satori/go.uuid"
 )
 
 type RegisterAccountCmdHandler interface {
@@ -19,7 +18,7 @@ type registerAccountHandler struct {
 	asClient authService.AuthServiceClient
 }
 
-func NewRegisterAccountHandler(log logger.Logger, cfg *config.Config, asClient authService.AuthServiceClient) *registerAccountHandler {
+func NewRegisterAccountHandler(log logger.Logger, cfg *config.Config, asClient authService.AuthServiceClient) RegisterAccountCmdHandler {
 	return &registerAccountHandler{
 		log:      log,
 		cfg:      cfg,
@@ -38,13 +37,8 @@ func (r *registerAccountHandler) Handle(ctx context.Context, command *RegisterAc
 		return nil, err
 	}
 
-	accountUUID, err := uuid.FromString(regResult.GetAccountID())
-	if err != nil {
-		return nil, err
-	}
-
 	return &dto.RegisterAccountResponse{
-		AccountID: accountUUID,
+		AccountID: regResult.GetAccountID(),
 		PlayerID:  regResult.GetPlayerID(),
 		Token:     regResult.GetToken(),
 	}, nil

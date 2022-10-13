@@ -30,22 +30,6 @@ services:
       TZ: "Asia/Bangkok"
     ports:
       - "5003:5003"
-  account_service:
-    container_name: "account_service"
-    build:
-      context: .
-      dockerfile: Docker/account.Dockerfile
-    networks:
-      - game_server
-    depends_on:
-      database:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    environment:
-      TZ: "Asia/Bangkok"
-    ports:
-      - "5004:5004"
   database:
     container_name: postgres_game_db
     image: postgres:14-alpine
@@ -101,7 +85,6 @@ services:
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL_SAME_HOST:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-#      - KAFKA_CREATE_TOPICS=accountRegister:10:1,accountUpdate:10:1,accountChangePassword:10:1,accountBan:10:1
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper

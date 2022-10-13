@@ -35,8 +35,7 @@ type Http struct {
 }
 
 type Grpc struct {
-	AuthServicePort    string
-	AccountServicePort string
+	AuthServicePort string
 }
 
 type KafkaTopics struct {

@@ -3,16 +3,16 @@ package queries
 import "github.com/ce-final-project/backend_game_server/pkg/utils"
 
 type RoleQueries struct {
-	searchRole    SearchRoleQueryHandler
-	getRoleByID   GetRoleByIDQueryHandler
-	getRoleByName GetRoleByNameQueryHandler
+	SearchRole    SearchRoleQueryHandler
+	GetRoleByID   GetRoleByIDQueryHandler
+	GetRoleByName GetRoleByNameQueryHandler
 }
 
 func NewRoleQueries(searchRole SearchRoleQueryHandler, getRoleByID GetRoleByIDQueryHandler, getRoleByName GetRoleByNameQueryHandler) *RoleQueries {
 	return &RoleQueries{
-		searchRole:    searchRole,
-		getRoleByID:   getRoleByID,
-		getRoleByName: getRoleByName,
+		SearchRole:    searchRole,
+		GetRoleByID:   getRoleByID,
+		GetRoleByName: getRoleByName,
 	}
 }
 

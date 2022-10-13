@@ -8,6 +8,7 @@ import (
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/ce-final-project/backend_game_server/pkg/tracing"
 	"github.com/labstack/echo/v4"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -99,7 +100,7 @@ func (mw *middlewareManager) AuthorizationMiddleware() echo.MiddlewareFunc {
 				mw.log.WarnMsg("Invalid Token or Expired", httpErrors.WrongCredentials)
 				return httpErrors.ErrorCtxResponse(c, httpErrors.WrongCredentials, mw.cfg.HTTP.DebugErrorsResponse)
 			}
-			c.Request().Header.Set("User-ID", result.AccountID.String())
+			c.Request().Header.Set("User-ID", strconv.FormatUint(result.AccountID, 10))
 			c.Request().Header.Set("Player-ID", result.PlayerID)
 			return next(c)
 		}

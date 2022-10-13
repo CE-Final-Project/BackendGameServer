@@ -1,16 +1,16 @@
 package commands
 
 type RoleCommands struct {
-	createRole     CreateRoleCmdHandler
-	changeRoleName ChangeRoleNameCmdHandler
-	deleteRole     DeleteRoleCmdHandler
+	CreateRole     CreateRoleCmdHandler
+	ChangeRoleName ChangeRoleNameCmdHandler
+	DeleteRole     DeleteRoleCmdHandler
 }
 
 func NewRoleCommands(createRole CreateRoleCmdHandler, changeRoleName ChangeRoleNameCmdHandler, deleteRole DeleteRoleCmdHandler) *RoleCommands {
 	return &RoleCommands{
-		createRole:     createRole,
-		changeRoleName: changeRoleName,
-		deleteRole:     deleteRole,
+		CreateRole:     createRole,
+		ChangeRoleName: changeRoleName,
+		DeleteRole:     deleteRole,
 	}
 }
 

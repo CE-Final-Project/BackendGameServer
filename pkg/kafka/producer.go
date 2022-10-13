@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"context"
-	"github.com/ce-final-project/backend_rest_api/pkg/logger"
+	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -18,7 +18,7 @@ type producer struct {
 }
 
 // NewProducer create new kafka producer
-func NewProducer(log logger.Logger, brokers []string) *producer {
+func NewProducer(log logger.Logger, brokers []string) Producer {
 	return &producer{log: log, brokers: brokers, w: NewWriter(brokers, kafka.LoggerFunc(log.Errorf))}
 }
 
