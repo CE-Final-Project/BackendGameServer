@@ -2,12 +2,8 @@ package server
 
 import (
 	"context"
-	accountService "github.com/ce-final-project/backend_game_server/account/proto"
 	authService "github.com/ce-final-project/backend_game_server/authentication/proto"
 	"github.com/ce-final-project/backend_game_server/gateway/config"
-	accountClient "github.com/ce-final-project/backend_game_server/gateway/internal/account/client"
-	accountV1 "github.com/ce-final-project/backend_game_server/gateway/internal/account/delivery/http/v1"
-	sAcc "github.com/ce-final-project/backend_game_server/gateway/internal/account/service"
 	authClient "github.com/ce-final-project/backend_game_server/gateway/internal/auth/client"
 	authV1 "github.com/ce-final-project/backend_game_server/gateway/internal/auth/delivery/http/v1"
 	sAuth "github.com/ce-final-project/backend_game_server/gateway/internal/auth/service"
@@ -21,18 +17,17 @@ import (
 	"syscall"
 )
 
-type server struct {
+type Server struct {
 	log  logger.Logger
 	cfg  *config.Config
 	v    *validator.Validate
 	mw   middlewares.MiddlewareManager
 	echo *echo.Echo
-	acs  *sAcc.AccountService
 	as   *sAuth.AuthService
 }
 
-func NewServer(log logger.Logger, cfg *config.Config) *server {
-	return &server{
+func NewServer(log logger.Logger, cfg *config.Config) *Server {
+	return &Server{
 		log:  log,
 		cfg:  cfg,
 		v:    validator.New(),
@@ -40,7 +35,7 @@ func NewServer(log logger.Logger, cfg *config.Config) *server {
 	}
 }
 
-func (s *server) Run() error {
+func (s *Server) Run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 
@@ -51,25 +46,13 @@ func (s *server) Run() error {
 	defer authServiceConn.Close()
 	asClient := authService.NewAuthServiceClient(authServiceConn)
 
-	accountServiceConn, err := accountClient.NewAccountServiceConn(ctx, s.cfg)
-	if err != nil {
-		return err
-	}
-	defer accountServiceConn.Close()
-
-	acsClient := accountService.NewAccountServiceClient(accountServiceConn)
-
 	kafkaProducer := kafka.NewProducer(s.log, s.cfg.Kafka.Brokers)
 
-	s.acs = sAcc.NewAccountService(s.log, s.cfg, kafkaProducer, acsClient)
 	s.as = sAuth.NewAuthService(s.log, s.cfg, kafkaProducer, asClient)
 	s.mw = middlewares.NewMiddlewareManager(s.log, s.cfg, s.as)
 
 	authHandler := authV1.NewAuthsHandlers(s.echo.Group("/api/v1"), s.log, s.mw, s.cfg, s.as, s.v)
 	authHandler.MapRoutes()
-
-	accountHandler := accountV1.NewAccountHandlers(s.echo.Group("/api/v1"), s.log, s.mw, s.cfg, s.acs, s.v)
-	accountHandler.MapRoutes()
 
 	go func() {
 		if err := s.runHttpServer(); err != nil {

@@ -19,7 +19,7 @@ type verifyTokenHandler struct {
 	asClient authService.AuthServiceClient
 }
 
-func NewVerifyTokenHandler(log logger.Logger, cfg *config.Config, asClient authService.AuthServiceClient) *verifyTokenHandler {
+func NewVerifyTokenHandler(log logger.Logger, cfg *config.Config, asClient authService.AuthServiceClient) VerifyTokenHandler {
 	return &verifyTokenHandler{log: log, cfg: cfg, asClient: asClient}
 }
 

@@ -12,193 +12,6 @@
     },
     "basePath": "/api/v1",
     "paths": {
-        "/account": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update account: username or email",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account"
-                ],
-                "summary": "Update account",
-                "parameters": [
-                    {
-                        "description": "Update body request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateAccount"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateAccountResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/account/password": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update password account",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account"
-                ],
-                "summary": "Change password account",
-                "parameters": [
-                    {
-                        "description": "ChangePassword body request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.ChangePassword"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateAccountResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/account/search": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Search Account with Username",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account"
-                ],
-                "summary": "Search Account",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "text",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.AccountsListResponseDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/account/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get all information Account by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account"
-                ],
-                "summary": "Account information by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Account ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.AccountResponseDto"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete account by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account"
-                ],
-                "summary": "Delete account",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Account ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.DeleteAccountByIdResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/login": {
             "post": {
                 "description": "Login with Username and Password",
@@ -269,98 +82,6 @@
         }
     },
     "definitions": {
-        "dto.AccountResponseDto": {
-            "type": "object",
-            "required": [
-                "account_id",
-                "email",
-                "is_ban",
-                "player_id",
-                "username"
-            ],
-            "properties": {
-                "account_id": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "is_ban": {
-                    "type": "boolean"
-                },
-                "player_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.AccountsListResponseDto": {
-            "type": "object",
-            "properties": {
-                "accounts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.AccountResponseDto"
-                    }
-                },
-                "hasMore": {
-                    "type": "boolean"
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "size": {
-                    "type": "integer"
-                },
-                "totalCount": {
-                    "type": "integer"
-                },
-                "totalPages": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ChangePassword": {
-            "type": "object",
-            "required": [
-                "account_id",
-                "new_password",
-                "old_password"
-            ],
-            "properties": {
-                "account_id": {
-                    "type": "string"
-                },
-                "new_password": {
-                    "type": "string"
-                },
-                "old_password": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.DeleteAccountByIdResponse": {
-            "type": "object",
-            "required": [
-                "account_id"
-            ],
-            "properties": {
-                "account_id": {
-                    "type": "string"
-                },
-                "deleted_at": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.LoginAccount": {
             "type": "object",
             "required": [
@@ -369,10 +90,14 @@
             ],
             "properties": {
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 8
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 3
                 }
             }
         },
@@ -385,7 +110,7 @@
             ],
             "properties": {
                 "account_id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "player_id": {
                     "type": "string"
@@ -404,13 +129,18 @@
             ],
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 320
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 8
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 3
                 }
             }
         },
@@ -423,43 +153,12 @@
             ],
             "properties": {
                 "account_id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "player_id": {
                     "type": "string"
                 },
                 "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateAccount": {
-            "type": "object",
-            "required": [
-                "account_id"
-            ],
-            "properties": {
-                "account_id": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateAccountResponse": {
-            "type": "object",
-            "required": [
-                "account_id"
-            ],
-            "properties": {
-                "account_id": {
-                    "type": "string"
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }
