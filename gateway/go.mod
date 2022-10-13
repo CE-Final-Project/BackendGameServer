@@ -9,8 +9,8 @@ replace github.com/ce-final-project/backend_game_server/proto => ../proto
 replace github.com/ce-final-project/backend_game_server/authentication => ../authentication
 
 require (
-	github.com/ce-final-project/backend_game_server/authentication v0.0.0-00010101000000-000000000000
-	github.com/ce-final-project/backend_game_server/pkg v0.0.0-00010101000000-000000000000
+	github.com/ce-final-project/backend_game_server/authentication v0.0.0-20220930092121-6aea4c9bf717
+	github.com/ce-final-project/backend_game_server/pkg v0.0.0-20220930092121-6aea4c9bf717
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/labstack/echo/v4 v4.9.0
