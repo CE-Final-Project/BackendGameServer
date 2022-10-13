@@ -20,17 +20,17 @@ func NewAccountService(
 	cacheRepo repository.CacheRepository,
 ) *AccountService {
 
-	createAccountHandler := commands.NewCreateAccountHandler(log, cfg, accountRepo, cacheRepo)
+	createAccountCmdHandler := commands.NewCreateAccountCmdHandler(log, cfg, accountRepo, cacheRepo)
 	deleteAccountCmdHandler := commands.NewDeleteAccountCmdHandler(log, cfg, accountRepo, cacheRepo)
 	changePasswordCmdHandler := commands.NewChangePasswordCmdHandler(log, cfg, accountRepo, cacheRepo)
 
-	getAccountByIdHandler := queries.NewGetAccountByIdHandler(log, cfg, accountRepo, cacheRepo)
-	getAccountByUsernameHandler := queries.NewGetAccountByUsernameHandler(log, cfg, accountRepo, cacheRepo)
-	getAccountByEmailHandler := queries.NewGetAccountByEmailHandler(log, cfg, accountRepo, cacheRepo)
-	searchAccountHandler := queries.NewSearchAccountHandler(log, cfg, accountRepo, cacheRepo)
+	getAccountByIdQueryHandler := queries.NewGetAccountByIdQueryHandler(log, cfg, accountRepo, cacheRepo)
+	getAccountByUsernameQueryHandler := queries.NewGetAccountByUsernameQueryHandler(log, cfg, accountRepo, cacheRepo)
+	getAccountByEmailQueryHandler := queries.NewGetAccountByEmailQueryHandler(log, cfg, accountRepo, cacheRepo)
+	searchAccountQueryHandler := queries.NewSearchAccountQueryHandler(log, cfg, accountRepo, cacheRepo)
 
-	accountCommands := commands.NewAccountCommands(createAccountHandler, changePasswordCmdHandler, deleteAccountCmdHandler)
-	accountQueries := queries.NewAccountQueries(getAccountByIdHandler, getAccountByUsernameHandler, getAccountByEmailHandler, searchAccountHandler)
+	accountCommands := commands.NewAccountCommands(createAccountCmdHandler, changePasswordCmdHandler, deleteAccountCmdHandler)
+	accountQueries := queries.NewAccountQueries(getAccountByIdQueryHandler, getAccountByUsernameQueryHandler, getAccountByEmailQueryHandler, searchAccountQueryHandler)
 
 	return &AccountService{Commands: accountCommands, Queries: accountQueries}
 }

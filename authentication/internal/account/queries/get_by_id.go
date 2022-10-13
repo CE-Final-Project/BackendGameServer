@@ -21,7 +21,7 @@ type getAccountByIdHandler struct {
 	cacheRepo   repository.CacheRepository
 }
 
-func NewGetAccountByIdHandler(log logger.Logger, cfg *config.Config, accountRepo repository.AccountRepository, cacheRepo repository.CacheRepository) GetAccountByIdHandler {
+func NewGetAccountByIdQueryHandler(log logger.Logger, cfg *config.Config, accountRepo repository.AccountRepository, cacheRepo repository.CacheRepository) GetAccountByIdHandler {
 	return &getAccountByIdHandler{log: log, cfg: cfg, accountRepo: accountRepo, cacheRepo: cacheRepo}
 }
 

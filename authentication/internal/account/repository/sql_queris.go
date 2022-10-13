@@ -1,8 +1,8 @@
 package repository
 
 const (
-	createAccountQuery = `INSERT INTO accounts (id, player_id, username, email, password_hashed, created_at, updated_at) 
-	VALUES ($1, $2, $3, $4, $5, now(), now()) RETURNING id, player_id, username, email, password_hashed, created_at, updated_at`
+	insertAccountQuery = `INSERT INTO accounts ( player_id, username, email, password_hashed, created_at, updated_at) 
+	VALUES ($1, $2, $3, $4, now(), now()) RETURNING id, player_id, username, email, password_hashed, created_at, updated_at`
 
 	updateAccountQuery = `UPDATE accounts a SET 
                       username=COALESCE(NULLIF($1, ''), username), 

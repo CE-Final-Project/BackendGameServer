@@ -17,12 +17,12 @@ service authService {
 
 service accountService {
   // account
-  rpc GetAccountById(GetAccountByIdReq) returns (GetAccountByIdRes);
+  rpc GetAccountByID(GetAccountByIdReq) returns (GetAccountByIdRes);
   rpc GetAccountByUsername(GetAccountByUsernameReq) returns (GetAccountByUsernameRes);
   rpc GetAccountByEmail(GetAccountByEmailReq) returns (GetAccountByEmailRes);
   rpc ChangePassword(ChangePasswordReq) returns (ChangePasswordRes);
   rpc SearchAccount(SearchAccountsReq) returns (SearchAccountsRes);
-  rpc DeleteAccountById(DeleteAccountByIdReq) returns (DeleteAccountByIdRes);
+  rpc DeleteAccountByID(DeleteAccountByIdReq) returns (DeleteAccountByIdRes);
 }
 
 service roleService {
@@ -30,5 +30,5 @@ service roleService {
   rpc CreateRole(CreateRoleReq) returns (CreateRoleRes);
   rpc UpdateRole(UpdateRoleReq) returns (UpdateRoleRes);
   rpc SearchRole(SearchRolesReq) returns (SearchRolesRes);
-  rpc DeleteRoleById(DeleteRoleReq) returns (DeleteRoleRes);
+  rpc DeleteRoleByID(DeleteRoleReq) returns (DeleteRoleRes);
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/ce-final-project/backend_game_server/authentication/internal/account/queries"
 	"github.com/ce-final-project/backend_game_server/authentication/internal/account/service"
 	"github.com/ce-final-project/backend_game_server/authentication/internal/models"
-	accountService "github.com/ce-final-project/backend_game_server/authentication/proto"
+	GRPCService "github.com/ce-final-project/backend_game_server/authentication/proto"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/ce-final-project/backend_game_server/pkg/tracing"
 	"github.com/ce-final-project/backend_game_server/pkg/utils"
@@ -24,7 +24,7 @@ type grpcService struct {
 	as  *service.AccountService
 }
 
-func (s *grpcService) GetAccountById(ctx context.Context, req *accountService.GetAccountByIdReq) (*accountService.GetAccountByIdRes, error) {
+func (s *grpcService) GetAccountByID(ctx context.Context, req *GRPCService.GetAccountByIdReq) (*GRPCService.GetAccountByIdRes, error) {
 	var span opentracing.Span
 	ctx, span = tracing.StartGrpcServerTracerSpan(ctx, "grpcService.GetAccountById")
 	defer span.Finish()
@@ -41,10 +41,10 @@ func (s *grpcService) GetAccountById(ctx context.Context, req *accountService.Ge
 		return nil, s.errResponse(codes.Internal, err)
 	}
 
-	return &accountService.GetAccountByIdRes{Account: models.AccountToGrpcMessage(account)}, nil
+	return &GRPCService.GetAccountByIdRes{Account: models.AccountToGrpcMessage(account)}, nil
 }
 
-func (s *grpcService) GetAccountByUsername(ctx context.Context, req *accountService.GetAccountByUsernameReq) (*accountService.GetAccountByUsernameRes, error) {
+func (s *grpcService) GetAccountByUsername(ctx context.Context, req *GRPCService.GetAccountByUsernameReq) (*GRPCService.GetAccountByUsernameRes, error) {
 	var span opentracing.Span
 	ctx, span = tracing.StartGrpcServerTracerSpan(ctx, "grpcService.GetAccountByUsername")
 	defer span.Finish()
@@ -60,10 +60,10 @@ func (s *grpcService) GetAccountByUsername(ctx context.Context, req *accountServ
 		return nil, s.errResponse(codes.Internal, err)
 	}
 
-	return &accountService.GetAccountByUsernameRes{Account: models.AccountToGrpcMessage(account)}, nil
+	return &GRPCService.GetAccountByUsernameRes{Account: models.AccountToGrpcMessage(account)}, nil
 }
 
-func (s *grpcService) GetAccountByEmail(ctx context.Context, req *accountService.GetAccountByEmailReq) (*accountService.GetAccountByEmailRes, error) {
+func (s *grpcService) GetAccountByEmail(ctx context.Context, req *GRPCService.GetAccountByEmailReq) (*GRPCService.GetAccountByEmailRes, error) {
 	var span opentracing.Span
 	ctx, span = tracing.StartGrpcServerTracerSpan(ctx, "grpcService.GetAccountByEmail")
 	defer span.Finish()
@@ -79,10 +79,10 @@ func (s *grpcService) GetAccountByEmail(ctx context.Context, req *accountService
 		return nil, s.errResponse(codes.Internal, err)
 	}
 
-	return &accountService.GetAccountByEmailRes{Account: models.AccountToGrpcMessage(account)}, nil
+	return &GRPCService.GetAccountByEmailRes{Account: models.AccountToGrpcMessage(account)}, nil
 }
 
-func (s *grpcService) ChangePassword(ctx context.Context, req *accountService.ChangePasswordReq) (*accountService.ChangePasswordRes, error) {
+func (s *grpcService) ChangePassword(ctx context.Context, req *GRPCService.ChangePasswordReq) (*GRPCService.ChangePasswordRes, error) {
 	var span opentracing.Span
 	ctx, span = tracing.StartGrpcServerTracerSpan(ctx, "grpcService.ChangePassword")
 	defer span.Finish()
@@ -98,10 +98,10 @@ func (s *grpcService) ChangePassword(ctx context.Context, req *accountService.Ch
 		return nil, s.errResponse(codes.Internal, err)
 	}
 
-	return &accountService.ChangePasswordRes{AccountID: command.ID}, nil
+	return &GRPCService.ChangePasswordRes{AccountID: command.ID}, nil
 }
 
-func (s *grpcService) SearchAccount(ctx context.Context, req *accountService.SearchAccountsReq) (*accountService.SearchAccountsRes, error) {
+func (s *grpcService) SearchAccount(ctx context.Context, req *GRPCService.SearchAccountsReq) (*GRPCService.SearchAccountsRes, error) {
 	var span opentracing.Span
 	ctx, span = tracing.StartGrpcServerTracerSpan(ctx, "grpcService.SearchAccount")
 	defer span.Finish()
@@ -122,7 +122,7 @@ func (s *grpcService) SearchAccount(ctx context.Context, req *accountService.Sea
 	return models.AccountListToGrpc(accounts), nil
 }
 
-func (s *grpcService) DeleteAccountByID(ctx context.Context, req *accountService.DeleteAccountByIdReq) (*accountService.DeleteAccountByIdRes, error) {
+func (s *grpcService) DeleteAccountByID(ctx context.Context, req *GRPCService.DeleteAccountByIdReq) (*GRPCService.DeleteAccountByIdRes, error) {
 	var span opentracing.Span
 	ctx, span = tracing.StartGrpcServerTracerSpan(ctx, "grpcService.DeleteAccountByID")
 	defer span.Finish()
@@ -137,10 +137,10 @@ func (s *grpcService) DeleteAccountByID(ctx context.Context, req *accountService
 		s.log.WarnMsg("DeleteAccountByID.Handle", err)
 		return nil, s.errResponse(codes.Internal, err)
 	}
-	return &accountService.DeleteAccountByIdRes{}, nil
+	return &GRPCService.DeleteAccountByIdRes{}, nil
 }
 
-func NewAccountGRPCService(log logger.Logger, cfg *config.Config, v *validator.Validate, as *service.AccountService) accountService.AccountServiceServer {
+func NewAccountGRPCService(log logger.Logger, cfg *config.Config, v *validator.Validate, as *service.AccountService) GRPCService.AccountServiceServer {
 	return &grpcService{
 		log: log,
 		cfg: cfg,

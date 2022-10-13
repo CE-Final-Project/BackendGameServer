@@ -23,7 +23,7 @@ type createAccountHandler struct {
 	cacheRepo   repository.CacheRepository
 }
 
-func NewCreateAccountHandler(log logger.Logger, cfg *config.Config, accountRepo repository.AccountRepository, cacheRepo repository.CacheRepository) CreateAccountCmdHandler {
+func NewCreateAccountCmdHandler(log logger.Logger, cfg *config.Config, accountRepo repository.AccountRepository, cacheRepo repository.CacheRepository) CreateAccountCmdHandler {
 	return &createAccountHandler{log: log, cfg: cfg, accountRepo: accountRepo, cacheRepo: cacheRepo}
 }
 

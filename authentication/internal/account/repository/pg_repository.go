@@ -122,7 +122,7 @@ func (p *postgresRepository) InsertAccount(ctx context.Context, account *models.
 	defer span.Finish()
 
 	var created models.Account
-	if err := p.db.QueryRowContext(ctx, createAccountQuery, &account.ID, &account.PlayerID, &account.Username, &account.Email, &account.PasswordHashed).Scan(
+	if err := p.db.QueryRowContext(ctx, insertAccountQuery, &account.PlayerID, &account.Username, &account.Email, &account.PasswordHashed).Scan(
 		&created.ID,
 		&created.PlayerID,
 		&created.Username,

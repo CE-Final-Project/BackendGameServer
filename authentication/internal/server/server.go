@@ -5,6 +5,8 @@ import (
 	"github.com/ce-final-project/backend_game_server/authentication/config"
 	accountRepository "github.com/ce-final-project/backend_game_server/authentication/internal/account/repository"
 	accountService "github.com/ce-final-project/backend_game_server/authentication/internal/account/service"
+	roleRepository "github.com/ce-final-project/backend_game_server/authentication/internal/role/repository"
+	roleService "github.com/ce-final-project/backend_game_server/authentication/internal/role/service"
 	kafkaClient "github.com/ce-final-project/backend_game_server/pkg/kafka"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/ce-final-project/backend_game_server/pkg/postgres"
@@ -24,6 +26,7 @@ type Server struct {
 	cfg         *config.Config
 	v           *validator.Validate
 	acc         *accountService.AccountService
+	rs          *roleService.RoleService
 	db          *sqlx.DB
 	redisClient redis.UniversalClient
 	kafkaConn   *kafka.Conn
@@ -58,10 +61,13 @@ func (s *Server) Run() error {
 	accountRepo := accountRepository.NewAccountRepository(s.db, s.log)
 	cacheRepo := accountRepository.NewCacheRepository(s.redisClient, s.log)
 
+	roleRepo := roleRepository.NewRoleRepository(s.db, s.log)
+
 	kafkaProducer := kafkaClient.NewProducer(s.log, s.cfg.Kafka.Brokers)
 	defer kafkaProducer.Close()
 
 	s.acc = accountService.NewAccountService(s.log, s.cfg, accountRepo, cacheRepo)
+	s.rs = roleService.NewRoleService(s.log, s.cfg, roleRepo)
 
 	if err := s.connectKafkaBrokers(ctx); err != nil {
 		return errors.Wrap(err, "s.connectKafkaBrokers")

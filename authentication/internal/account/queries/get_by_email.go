@@ -21,7 +21,7 @@ type getAccountByEmailHandler struct {
 	cacheRepo   repository.CacheRepository
 }
 
-func NewGetAccountByEmailHandler(log logger.Logger, cfg *config.Config, accountRepo repository.AccountRepository, cacheRepo repository.CacheRepository) GetAccountByEmailHandler {
+func NewGetAccountByEmailQueryHandler(log logger.Logger, cfg *config.Config, accountRepo repository.AccountRepository, cacheRepo repository.CacheRepository) GetAccountByEmailHandler {
 	return &getAccountByEmailHandler{log: log, cfg: cfg, accountRepo: accountRepo, cacheRepo: cacheRepo}
 }
 
