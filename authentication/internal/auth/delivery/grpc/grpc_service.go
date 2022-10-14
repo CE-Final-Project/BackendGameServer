@@ -45,8 +45,7 @@ func (g *grpcService) Login(ctx context.Context, req *authGRPCService.LoginReq) 
 	ctx, span = tracing.StartGrpcServerTracerSpan(ctx, "grpcService.LoginAccount")
 	defer span.Finish()
 
-	isEmail := g.isEmail(ctx, &isEmail{email: req.GetUsername()})
-
+	isEmail := g.isEmail(ctx, isEmail{Email: req.GetUsername()})
 	var account *models.Account
 
 	if isEmail {
@@ -175,7 +174,11 @@ func (g *grpcService) VerifyToken(ctx context.Context, req *authGRPCService.Veri
 func (g *grpcService) generateJwtToken(accountID string, playerID string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS512)
 	claim := token.Claims.(jwt.MapClaims)
-	claim["exp"] = time.Now().Add(10 * time.Minute).Unix()
+	m, err := time.ParseDuration(g.cfg.JWT.ExpireTime)
+	if err != nil {
+		return "", err
+	}
+	claim["exp"] = time.Now().Add(m).Unix()
 	claim["id"] = accountID
 	claim["player_id"] = playerID
 	tokenStr, err := token.SignedString([]byte(g.cfg.JWT.Secret))
@@ -211,10 +214,10 @@ func (g *grpcService) errResponse(c codes.Code, err error) error {
 }
 
 type isEmail struct {
-	email string `validate:"required,email,max=320"`
+	Email string `validate:"required,email,max=320"`
 }
 
-func (g *grpcService) isEmail(ctx context.Context, isEmail *isEmail) bool {
+func (g *grpcService) isEmail(ctx context.Context, isEmail isEmail) bool {
 	if err := g.v.StructCtx(ctx, isEmail); err != nil {
 		return false
 	}

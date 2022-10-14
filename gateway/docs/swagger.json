@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API Gateway microservices.",
-        "title": "API Gateway Game Server",
+        "description": "API Client Gateway microservices .",
+        "title": "API Gateway Game Server (Client)",
         "contact": {
             "name": "Poomipat Chuealue",
             "url": "https://github.com/Poomipat-Ch",
@@ -82,6 +82,32 @@
         }
     },
     "definitions": {
+        "dto.Account": {
+            "type": "object",
+            "required": [
+                "email",
+                "id",
+                "player_id",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "player_id": {
+                    "type": "string",
+                    "maxLength": 15
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 3
+                }
+            }
+        },
         "dto.LoginAccount": {
             "type": "object",
             "required": [
@@ -104,16 +130,11 @@
         "dto.LoginAccountResponse": {
             "type": "object",
             "required": [
-                "account_id",
-                "player_id",
                 "token"
             ],
             "properties": {
-                "account_id": {
-                    "type": "integer"
-                },
-                "player_id": {
-                    "type": "string"
+                "account": {
+                    "$ref": "#/definitions/dto.Account"
                 },
                 "token": {
                     "type": "string"
@@ -147,16 +168,11 @@
         "dto.RegisterAccountResponse": {
             "type": "object",
             "required": [
-                "account_id",
-                "player_id",
                 "token"
             ],
             "properties": {
-                "account_id": {
-                    "type": "integer"
-                },
-                "player_id": {
-                    "type": "string"
+                "account": {
+                    "$ref": "#/definitions/dto.Account"
                 },
                 "token": {
                     "type": "string"

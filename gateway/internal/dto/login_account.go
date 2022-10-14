@@ -6,7 +6,6 @@ type LoginAccount struct {
 }
 
 type LoginAccountResponse struct {
-	AccountID uint64 `json:"account_id" validate:"required"`
-	PlayerID  string `json:"player_id" validate:"required"`
-	Token     string `json:"token" validate:"required"`
+	Account Account `json:"account"`
+	Token   string  `json:"token" validate:"required"`
 }
