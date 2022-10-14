@@ -19,10 +19,11 @@ func NewAuthService(
 	cfg *config.Config,
 	kafkaProducer kafkaClient.Producer,
 	authService authService.AuthServiceClient,
+	accountService authService.AccountServiceClient,
 ) *AuthService {
 
-	registerCommandHandler := commands.NewRegisterAccountHandler(log, cfg, authService)
-	loginCommandHandler := commands.NewLoginAccountHandler(log, cfg, authService)
+	registerCommandHandler := commands.NewRegisterAccountHandler(log, cfg, authService, accountService)
+	loginCommandHandler := commands.NewLoginAccountHandler(log, cfg, authService, accountService)
 
 	verifyTokenQueryHandler := queries.NewVerifyTokenHandler(log, cfg, authService)
 
