@@ -2,12 +2,8 @@ module github.com/ce-final-project/backend_game_server/authentication
 
 go 1.19
 
-replace github.com/ce-final-project/backend_game_server/pkg => ../pkg
-
-replace github.com/ce-final-project/backend_game_server/proto => ../proto
-
 require (
-	github.com/ce-final-project/backend_game_server/pkg v0.0.0-00010101000000-000000000000
+	github.com/ce-final-project/backend_game_server/pkg v0.0.0-20221013160152-1ae03a4dbb70
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt/v4 v4.4.2
@@ -24,6 +20,7 @@ require (
 
 require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
+	github.com/ce-final-project/backend_game_server/proto v0.0.0-20221013160152-1ae03a4dbb70 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
