@@ -203,8 +203,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "API Gateway Game Server",
-	Description:      "API Gateway microservices.",
+	Title:            "API Gateway Game Server (Client)",
+	Description:      "API Client Gateway microservices .",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

@@ -74,8 +74,8 @@ info:
     email: poomipat002@gmail.com
     name: Poomipat Chuealue
     url: https://github.com/Poomipat-Ch
-  description: API Gateway microservices.
-  title: API Gateway Game Server
+  description: API Client Gateway microservices .
+  title: API Gateway Game Server (Client)
   version: "1.0"
 paths:
   /login:

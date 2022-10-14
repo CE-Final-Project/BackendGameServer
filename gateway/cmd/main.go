@@ -7,9 +7,9 @@ import (
 	"log"
 )
 
-// @title           			API Gateway Game Server
+// @title           			API Gateway Game Server (Client)
 // @version         			1.0
-// @description     			API Gateway microservices.
+// @description     			API Client Gateway microservices .
 // @BasePath  					/api/v1
 // @contact.name 				Poomipat Chuealue
 // @contact.url 				https://github.com/Poomipat-Ch
