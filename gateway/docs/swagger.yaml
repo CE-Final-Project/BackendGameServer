@@ -1,5 +1,24 @@
 basePath: /api/v1
 definitions:
+  dto.Account:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      player_id:
+        maxLength: 15
+        type: string
+      username:
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - email
+    - id
+    - player_id
+    - username
+    type: object
   dto.LoginAccount:
     properties:
       password:
@@ -16,15 +35,11 @@ definitions:
     type: object
   dto.LoginAccountResponse:
     properties:
-      account_id:
-        type: integer
-      player_id:
-        type: string
+      account:
+        $ref: '#/definitions/dto.Account'
       token:
         type: string
     required:
-    - account_id
-    - player_id
     - token
     type: object
   dto.RegisterAccount:
@@ -47,15 +62,11 @@ definitions:
     type: object
   dto.RegisterAccountResponse:
     properties:
-      account_id:
-        type: integer
-      player_id:
-        type: string
+      account:
+        $ref: '#/definitions/dto.Account'
       token:
         type: string
     required:
-    - account_id
-    - player_id
     - token
     type: object
 info:

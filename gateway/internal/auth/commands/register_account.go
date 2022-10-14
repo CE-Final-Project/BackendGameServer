@@ -13,16 +13,18 @@ type RegisterAccountCmdHandler interface {
 }
 
 type registerAccountHandler struct {
-	log      logger.Logger
-	cfg      *config.Config
-	asClient authService.AuthServiceClient
+	log       logger.Logger
+	cfg       *config.Config
+	asClient  authService.AuthServiceClient
+	accClient authService.AccountServiceClient
 }
 
-func NewRegisterAccountHandler(log logger.Logger, cfg *config.Config, asClient authService.AuthServiceClient) RegisterAccountCmdHandler {
+func NewRegisterAccountHandler(log logger.Logger, cfg *config.Config, asClient authService.AuthServiceClient, accClient authService.AccountServiceClient) RegisterAccountCmdHandler {
 	return &registerAccountHandler{
-		log:      log,
-		cfg:      cfg,
-		asClient: asClient,
+		log:       log,
+		cfg:       cfg,
+		asClient:  asClient,
+		accClient: accClient,
 	}
 }
 
@@ -37,9 +39,20 @@ func (r *registerAccountHandler) Handle(ctx context.Context, command *RegisterAc
 		return nil, err
 	}
 
+	result, err := r.accClient.GetAccountByID(ctx, &authService.GetAccountByIdReq{AccountID: regResult.GetAccountID()})
+	if err != nil {
+		return nil, err
+	}
+
+	account := result.GetAccount()
+
 	return &dto.RegisterAccountResponse{
-		AccountID: regResult.GetAccountID(),
-		PlayerID:  regResult.GetPlayerID(),
-		Token:     regResult.GetToken(),
+		Account: dto.Account{
+			ID:       account.GetAccountID(),
+			PlayerID: account.GetPlayerID(),
+			Username: account.GetUsername(),
+			Email:    account.GetEmail(),
+		},
+		Token: regResult.GetToken(),
 	}, nil
 }

@@ -12,6 +12,8 @@ import (
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
+	"google.golang.org/grpc"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -43,12 +45,18 @@ func (s *Server) Run() error {
 	if err != nil {
 		return err
 	}
-	defer authServiceConn.Close()
+	defer func(authServiceConn *grpc.ClientConn) {
+		err := authServiceConn.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(authServiceConn)
 	asClient := authService.NewAuthServiceClient(authServiceConn)
+	accClient := authService.NewAccountServiceClient(authServiceConn)
 
 	kafkaProducer := kafka.NewProducer(s.log, s.cfg.Kafka.Brokers)
 
-	s.as = sAuth.NewAuthService(s.log, s.cfg, kafkaProducer, asClient)
+	s.as = sAuth.NewAuthService(s.log, s.cfg, kafkaProducer, asClient, accClient)
 	s.mw = middlewares.NewMiddlewareManager(s.log, s.cfg, s.as)
 
 	authHandler := authV1.NewAuthsHandlers(s.echo.Group("/api/v1"), s.log, s.mw, s.cfg, s.as, s.v)

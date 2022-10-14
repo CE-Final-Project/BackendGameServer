@@ -90,6 +90,32 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.Account": {
+            "type": "object",
+            "required": [
+                "email",
+                "id",
+                "player_id",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "player_id": {
+                    "type": "string",
+                    "maxLength": 15
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 3
+                }
+            }
+        },
         "dto.LoginAccount": {
             "type": "object",
             "required": [
@@ -112,16 +138,11 @@ const docTemplate = `{
         "dto.LoginAccountResponse": {
             "type": "object",
             "required": [
-                "account_id",
-                "player_id",
                 "token"
             ],
             "properties": {
-                "account_id": {
-                    "type": "integer"
-                },
-                "player_id": {
-                    "type": "string"
+                "account": {
+                    "$ref": "#/definitions/dto.Account"
                 },
                 "token": {
                     "type": "string"
@@ -155,16 +176,11 @@ const docTemplate = `{
         "dto.RegisterAccountResponse": {
             "type": "object",
             "required": [
-                "account_id",
-                "player_id",
                 "token"
             ],
             "properties": {
-                "account_id": {
-                    "type": "integer"
-                },
-                "player_id": {
-                    "type": "string"
+                "account": {
+                    "$ref": "#/definitions/dto.Account"
                 },
                 "token": {
                     "type": "string"

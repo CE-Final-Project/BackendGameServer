@@ -37,7 +37,8 @@ type KafkaTopics struct {
 }
 
 type JWT struct {
-	Secret string `yaml:"secret"`
+	Secret     string `yaml:"secret"`
+	ExpireTime string `yaml:"expireTime"`
 }
 
 func InitConfig() (*Config, error) {
