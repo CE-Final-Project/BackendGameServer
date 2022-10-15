@@ -13,6 +13,7 @@ FROM scratch
 
 COPY --from=build /app/authentication/auth_service /auth_service
 COPY ../authentication/config /config
+COPY ../authentication/migrations /migrations
 EXPOSE 5003
 
 CMD ["./auth_service"]
