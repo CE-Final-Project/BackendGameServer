@@ -7,4 +7,5 @@ option go_package="./;kafkaMessages";
 
 message FriendInvite {
   string PlayerID  = 1;
+  string FriendPlayerID = 2;
 }
