@@ -13,6 +13,10 @@ import (
 	redisClient "github.com/ce-final-project/backend_game_server/pkg/redis"
 	"github.com/go-playground/validator"
 	"github.com/go-redis/redis/v8"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database"
+	migratePostgres "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/segmentio/kafka-go"
@@ -44,12 +48,21 @@ func (s *Server) Run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 
-	// TODO: init db and repository
-
 	db, err := postgres.NewPostgresDatabase(s.cfg.Postgres)
 	if err != nil {
 		return errors.Wrap(err, "postgres.NewPostgresDatabase")
 	}
+	var driver database.Driver
+	driver, err = migratePostgres.WithInstance(db.DB, &migratePostgres.Config{})
+	var m *migrate.Migrate
+	m, err = migrate.NewWithDatabaseInstance(
+		"file:///migrations",
+		"postgres", driver)
+	err = m.Up()
+	if err != nil {
+		s.log.Infof("Migration: %v", err)
+	}
+
 	s.log.Infof("postgres connected: %v", db.Stats().OpenConnections)
 	s.db = db
 	defer s.db.Close()
