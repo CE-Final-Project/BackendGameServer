@@ -9,7 +9,6 @@ package kafkaMessages
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 )
@@ -21,20 +20,16 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type RegisterAccount struct {
+type FriendInvite struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AccountID string `protobuf:"bytes,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
-	PlayerID  string `protobuf:"bytes,2,opt,name=PlayerID,proto3" json:"PlayerID,omitempty"`
-	Username  string `protobuf:"bytes,3,opt,name=Username,proto3" json:"Username,omitempty"`
-	Email     string `protobuf:"bytes,4,opt,name=Email,proto3" json:"Email,omitempty"`
-	Password  string `protobuf:"bytes,5,opt,name=Password,proto3" json:"Password,omitempty"`
+	PlayerID string `protobuf:"bytes,1,opt,name=PlayerID,proto3" json:"PlayerID,omitempty"`
 }
 
-func (x *RegisterAccount) Reset() {
-	*x = RegisterAccount{}
+func (x *FriendInvite) Reset() {
+	*x = FriendInvite{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_kafka_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -42,13 +37,13 @@ func (x *RegisterAccount) Reset() {
 	}
 }
 
-func (x *RegisterAccount) String() string {
+func (x *FriendInvite) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RegisterAccount) ProtoMessage() {}
+func (*FriendInvite) ProtoMessage() {}
 
-func (x *RegisterAccount) ProtoReflect() protoreflect.Message {
+func (x *FriendInvite) ProtoReflect() protoreflect.Message {
 	mi := &file_kafka_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -60,506 +55,14 @@ func (x *RegisterAccount) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RegisterAccount.ProtoReflect.Descriptor instead.
-func (*RegisterAccount) Descriptor() ([]byte, []int) {
+// Deprecated: Use FriendInvite.ProtoReflect.Descriptor instead.
+func (*FriendInvite) Descriptor() ([]byte, []int) {
 	return file_kafka_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *RegisterAccount) GetAccountID() string {
-	if x != nil {
-		return x.AccountID
-	}
-	return ""
-}
-
-func (x *RegisterAccount) GetPlayerID() string {
+func (x *FriendInvite) GetPlayerID() string {
 	if x != nil {
 		return x.PlayerID
-	}
-	return ""
-}
-
-func (x *RegisterAccount) GetUsername() string {
-	if x != nil {
-		return x.Username
-	}
-	return ""
-}
-
-func (x *RegisterAccount) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-func (x *RegisterAccount) GetPassword() string {
-	if x != nil {
-		return x.Password
-	}
-	return ""
-}
-
-type UpdateAccount struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	AccountID string `protobuf:"bytes,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
-	Username  string `protobuf:"bytes,2,opt,name=Username,proto3" json:"Username,omitempty"`
-	Email     string `protobuf:"bytes,3,opt,name=Email,proto3" json:"Email,omitempty"`
-}
-
-func (x *UpdateAccount) Reset() {
-	*x = UpdateAccount{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_kafka_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *UpdateAccount) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateAccount) ProtoMessage() {}
-
-func (x *UpdateAccount) ProtoReflect() protoreflect.Message {
-	mi := &file_kafka_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateAccount.ProtoReflect.Descriptor instead.
-func (*UpdateAccount) Descriptor() ([]byte, []int) {
-	return file_kafka_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *UpdateAccount) GetAccountID() string {
-	if x != nil {
-		return x.AccountID
-	}
-	return ""
-}
-
-func (x *UpdateAccount) GetUsername() string {
-	if x != nil {
-		return x.Username
-	}
-	return ""
-}
-
-func (x *UpdateAccount) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-type ChangePassword struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	AccountID   string `protobuf:"bytes,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
-	OldPassword string `protobuf:"bytes,2,opt,name=OldPassword,proto3" json:"OldPassword,omitempty"`
-	NewPassword string `protobuf:"bytes,3,opt,name=NewPassword,proto3" json:"NewPassword,omitempty"`
-}
-
-func (x *ChangePassword) Reset() {
-	*x = ChangePassword{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_kafka_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *ChangePassword) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ChangePassword) ProtoMessage() {}
-
-func (x *ChangePassword) ProtoReflect() protoreflect.Message {
-	mi := &file_kafka_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ChangePassword.ProtoReflect.Descriptor instead.
-func (*ChangePassword) Descriptor() ([]byte, []int) {
-	return file_kafka_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *ChangePassword) GetAccountID() string {
-	if x != nil {
-		return x.AccountID
-	}
-	return ""
-}
-
-func (x *ChangePassword) GetOldPassword() string {
-	if x != nil {
-		return x.OldPassword
-	}
-	return ""
-}
-
-func (x *ChangePassword) GetNewPassword() string {
-	if x != nil {
-		return x.NewPassword
-	}
-	return ""
-}
-
-type BanAccountById struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	AccountID string `protobuf:"bytes,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
-	IsBan     bool   `protobuf:"varint,2,opt,name=IsBan,proto3" json:"IsBan,omitempty"`
-}
-
-func (x *BanAccountById) Reset() {
-	*x = BanAccountById{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_kafka_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *BanAccountById) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BanAccountById) ProtoMessage() {}
-
-func (x *BanAccountById) ProtoReflect() protoreflect.Message {
-	mi := &file_kafka_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BanAccountById.ProtoReflect.Descriptor instead.
-func (*BanAccountById) Descriptor() ([]byte, []int) {
-	return file_kafka_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *BanAccountById) GetAccountID() string {
-	if x != nil {
-		return x.AccountID
-	}
-	return ""
-}
-
-func (x *BanAccountById) GetIsBan() bool {
-	if x != nil {
-		return x.IsBan
-	}
-	return false
-}
-
-type DeleteAccount struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	AccountID string `protobuf:"bytes,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
-}
-
-func (x *DeleteAccount) Reset() {
-	*x = DeleteAccount{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_kafka_proto_msgTypes[4]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *DeleteAccount) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteAccount) ProtoMessage() {}
-
-func (x *DeleteAccount) ProtoReflect() protoreflect.Message {
-	mi := &file_kafka_proto_msgTypes[4]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteAccount.ProtoReflect.Descriptor instead.
-func (*DeleteAccount) Descriptor() ([]byte, []int) {
-	return file_kafka_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *DeleteAccount) GetAccountID() string {
-	if x != nil {
-		return x.AccountID
-	}
-	return ""
-}
-
-type Account struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	AccountID string                 `protobuf:"bytes,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
-	PlayerID  string                 `protobuf:"bytes,2,opt,name=PlayerID,proto3" json:"PlayerID,omitempty"`
-	Username  string                 `protobuf:"bytes,3,opt,name=Username,proto3" json:"Username,omitempty"`
-	Email     string                 `protobuf:"bytes,4,opt,name=Email,proto3" json:"Email,omitempty"`
-	IsBan     bool                   `protobuf:"varint,5,opt,name=IsBan,proto3" json:"IsBan,omitempty"`
-	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty"`
-	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=UpdatedAt,proto3" json:"UpdatedAt,omitempty"`
-}
-
-func (x *Account) Reset() {
-	*x = Account{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_kafka_proto_msgTypes[5]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Account) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Account) ProtoMessage() {}
-
-func (x *Account) ProtoReflect() protoreflect.Message {
-	mi := &file_kafka_proto_msgTypes[5]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Account.ProtoReflect.Descriptor instead.
-func (*Account) Descriptor() ([]byte, []int) {
-	return file_kafka_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *Account) GetAccountID() string {
-	if x != nil {
-		return x.AccountID
-	}
-	return ""
-}
-
-func (x *Account) GetPlayerID() string {
-	if x != nil {
-		return x.PlayerID
-	}
-	return ""
-}
-
-func (x *Account) GetUsername() string {
-	if x != nil {
-		return x.Username
-	}
-	return ""
-}
-
-func (x *Account) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-func (x *Account) GetIsBan() bool {
-	if x != nil {
-		return x.IsBan
-	}
-	return false
-}
-
-func (x *Account) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *Account) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
-type AccountRegistered struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Account *Account `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
-}
-
-func (x *AccountRegistered) Reset() {
-	*x = AccountRegistered{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_kafka_proto_msgTypes[6]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *AccountRegistered) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AccountRegistered) ProtoMessage() {}
-
-func (x *AccountRegistered) ProtoReflect() protoreflect.Message {
-	mi := &file_kafka_proto_msgTypes[6]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AccountRegistered.ProtoReflect.Descriptor instead.
-func (*AccountRegistered) Descriptor() ([]byte, []int) {
-	return file_kafka_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *AccountRegistered) GetAccount() *Account {
-	if x != nil {
-		return x.Account
-	}
-	return nil
-}
-
-type AccountUpdated struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Account *Account `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
-}
-
-func (x *AccountUpdated) Reset() {
-	*x = AccountUpdated{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_kafka_proto_msgTypes[7]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *AccountUpdated) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AccountUpdated) ProtoMessage() {}
-
-func (x *AccountUpdated) ProtoReflect() protoreflect.Message {
-	mi := &file_kafka_proto_msgTypes[7]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AccountUpdated.ProtoReflect.Descriptor instead.
-func (*AccountUpdated) Descriptor() ([]byte, []int) {
-	return file_kafka_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *AccountUpdated) GetAccount() *Account {
-	if x != nil {
-		return x.Account
-	}
-	return nil
-}
-
-type AccountDeleted struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	AccountID string `protobuf:"bytes,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
-}
-
-func (x *AccountDeleted) Reset() {
-	*x = AccountDeleted{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_kafka_proto_msgTypes[8]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *AccountDeleted) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AccountDeleted) ProtoMessage() {}
-
-func (x *AccountDeleted) ProtoReflect() protoreflect.Message {
-	mi := &file_kafka_proto_msgTypes[8]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AccountDeleted.ProtoReflect.Descriptor instead.
-func (*AccountDeleted) Descriptor() ([]byte, []int) {
-	return file_kafka_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *AccountDeleted) GetAccountID() string {
-	if x != nil {
-		return x.AccountID
 	}
 	return ""
 }
@@ -568,69 +71,12 @@ var File_kafka_proto protoreflect.FileDescriptor
 
 var file_kafka_proto_rawDesc = []byte{
 	0x0a, 0x0b, 0x6b, 0x61, 0x66, 0x6b, 0x61, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0d, 0x6b,
-	0x61, 0x66, 0x6b, 0x61, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x1a, 0x1f, 0x67, 0x6f,
-	0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69,
-	0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x99, 0x01,
-	0x0a, 0x0f, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e,
-	0x74, 0x12, 0x1c, 0x0a, 0x09, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x12,
-	0x1a, 0x0a, 0x08, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x49, 0x44, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x08, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x49, 0x44, 0x12, 0x1a, 0x0a, 0x08, 0x55,
-	0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x55,
-	0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x45, 0x6d, 0x61, 0x69, 0x6c,
-	0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x45, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x1a, 0x0a,
-	0x08, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x08, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x5f, 0x0a, 0x0d, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x41, 0x63,
-	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x41,
-	0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x12, 0x1a, 0x0a, 0x08, 0x55, 0x73, 0x65, 0x72,
-	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x55, 0x73, 0x65, 0x72,
-	0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x45, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x03, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x05, 0x45, 0x6d, 0x61, 0x69, 0x6c, 0x22, 0x72, 0x0a, 0x0e, 0x43, 0x68,
-	0x61, 0x6e, 0x67, 0x65, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x1c, 0x0a, 0x09,
-	0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x09, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x12, 0x20, 0x0a, 0x0b, 0x4f, 0x6c,
-	0x64, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x0b, 0x4f, 0x6c, 0x64, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x20, 0x0a, 0x0b,
-	0x4e, 0x65, 0x77, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x0b, 0x4e, 0x65, 0x77, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x44,
-	0x0a, 0x0e, 0x42, 0x61, 0x6e, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x42, 0x79, 0x49, 0x64,
-	0x12, 0x1c, 0x0a, 0x09, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x09, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x12, 0x14,
-	0x0a, 0x05, 0x49, 0x73, 0x42, 0x61, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x49,
-	0x73, 0x42, 0x61, 0x6e, 0x22, 0x2d, 0x0a, 0x0d, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x63,
-	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74,
-	0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e,
-	0x74, 0x49, 0x44, 0x22, 0xff, 0x01, 0x0a, 0x07, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x12,
-	0x1c, 0x0a, 0x09, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x09, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x12, 0x1a, 0x0a,
-	0x08, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x49, 0x44, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x08, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x49, 0x44, 0x12, 0x1a, 0x0a, 0x08, 0x55, 0x73, 0x65,
-	0x72, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x55, 0x73, 0x65,
-	0x72, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x45, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x04,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x45, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x14, 0x0a, 0x05, 0x49,
-	0x73, 0x42, 0x61, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x49, 0x73, 0x42, 0x61,
-	0x6e, 0x12, 0x38, 0x0a, 0x09, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x06,
-	0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70,
-	0x52, 0x09, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x38, 0x0a, 0x09, 0x55,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a,
-	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
-	0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x64, 0x41, 0x74, 0x22, 0x45, 0x0a, 0x11, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74,
-	0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x65, 0x64, 0x12, 0x30, 0x0a, 0x07, 0x61, 0x63,
-	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x6b, 0x61,
-	0x66, 0x6b, 0x61, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x2e, 0x41, 0x63, 0x63, 0x6f,
-	0x75, 0x6e, 0x74, 0x52, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x42, 0x0a, 0x0e,
-	0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x12, 0x30,
-	0x0a, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
-	0x16, 0x2e, 0x6b, 0x61, 0x66, 0x6b, 0x61, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x2e,
-	0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74,
-	0x22, 0x2e, 0x0a, 0x0e, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x64, 0x12, 0x1c, 0x0a, 0x09, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44,
-	0x42, 0x12, 0x5a, 0x10, 0x2e, 0x2f, 0x3b, 0x6b, 0x61, 0x66, 0x6b, 0x61, 0x4d, 0x65, 0x73, 0x73,
-	0x61, 0x67, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x66, 0x6b, 0x61, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x22, 0x2a, 0x0a, 0x0c,
+	0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x49, 0x6e, 0x76, 0x69, 0x74, 0x65, 0x12, 0x1a, 0x0a, 0x08,
+	0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x49, 0x44, 0x42, 0x12, 0x5a, 0x10, 0x2e, 0x2f, 0x3b, 0x6b,
+	0x61, 0x66, 0x6b, 0x61, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -645,29 +91,16 @@ func file_kafka_proto_rawDescGZIP() []byte {
 	return file_kafka_proto_rawDescData
 }
 
-var file_kafka_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_kafka_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_kafka_proto_goTypes = []interface{}{
-	(*RegisterAccount)(nil),       // 0: kafkaMessages.RegisterAccount
-	(*UpdateAccount)(nil),         // 1: kafkaMessages.UpdateAccount
-	(*ChangePassword)(nil),        // 2: kafkaMessages.ChangePassword
-	(*BanAccountById)(nil),        // 3: kafkaMessages.BanAccountById
-	(*DeleteAccount)(nil),         // 4: kafkaMessages.DeleteAccount
-	(*Account)(nil),               // 5: kafkaMessages.Account
-	(*AccountRegistered)(nil),     // 6: kafkaMessages.AccountRegistered
-	(*AccountUpdated)(nil),        // 7: kafkaMessages.AccountUpdated
-	(*AccountDeleted)(nil),        // 8: kafkaMessages.AccountDeleted
-	(*timestamppb.Timestamp)(nil), // 9: google.protobuf.Timestamp
+	(*FriendInvite)(nil), // 0: kafkaMessages.FriendInvite
 }
 var file_kafka_proto_depIdxs = []int32{
-	9, // 0: kafkaMessages.Account.CreatedAt:type_name -> google.protobuf.Timestamp
-	9, // 1: kafkaMessages.Account.UpdatedAt:type_name -> google.protobuf.Timestamp
-	5, // 2: kafkaMessages.AccountRegistered.account:type_name -> kafkaMessages.Account
-	5, // 3: kafkaMessages.AccountUpdated.account:type_name -> kafkaMessages.Account
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_kafka_proto_init() }
@@ -677,103 +110,7 @@ func file_kafka_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_kafka_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RegisterAccount); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_kafka_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateAccount); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_kafka_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ChangePassword); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_kafka_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BanAccountById); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_kafka_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteAccount); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_kafka_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Account); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_kafka_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AccountRegistered); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_kafka_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AccountUpdated); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_kafka_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AccountDeleted); i {
+			switch v := v.(*FriendInvite); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -791,7 +128,7 @@ func file_kafka_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_kafka_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
