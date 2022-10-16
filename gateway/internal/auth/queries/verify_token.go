@@ -24,7 +24,8 @@ func NewVerifyTokenHandler(log logger.Logger, cfg *config.Config, asClient authS
 }
 
 func (q *verifyTokenHandler) Handle(ctx context.Context, query *VerifyTokenQuery) (*dto.VerifyTokenResponse, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "verifyTokenHandler.Handle")
+	var span opentracing.Span
+	span, ctx = opentracing.StartSpanFromContext(ctx, "verifyTokenHandler.Handle")
 	defer span.Finish()
 
 	res, err := q.asClient.VerifyToken(ctx, &authService.VerifyTokenReq{Token: query.Token})

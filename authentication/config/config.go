@@ -34,6 +34,7 @@ type KafkaTopics struct {
 	ChangePassword  kafkaClient.TopicConfig
 	AccountBan      kafkaClient.TopicConfig
 	AccountDelete   kafkaClient.TopicConfig
+	FriendInvite    kafkaClient.TopicConfig
 }
 
 type JWT struct {

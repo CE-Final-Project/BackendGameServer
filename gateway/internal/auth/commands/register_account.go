@@ -6,6 +6,7 @@ import (
 	"github.com/ce-final-project/backend_game_server/gateway/config"
 	"github.com/ce-final-project/backend_game_server/gateway/internal/dto"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
+	"github.com/opentracing/opentracing-go"
 )
 
 type RegisterAccountCmdHandler interface {
@@ -29,6 +30,9 @@ func NewRegisterAccountHandler(log logger.Logger, cfg *config.Config, asClient a
 }
 
 func (r *registerAccountHandler) Handle(ctx context.Context, command *RegisterAccountCommand) (*dto.RegisterAccountResponse, error) {
+	var span opentracing.Span
+	span, ctx = opentracing.StartSpanFromContext(ctx, "registerAccountHandler.Handle")
+	defer span.Finish()
 
 	regResult, err := r.asClient.Register(ctx, &authService.RegisterReq{
 		Username: command.RegisterDto.Username,

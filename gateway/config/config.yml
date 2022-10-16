@@ -41,3 +41,7 @@ kafkaTopics:
     topicName: accountDelete
     partitions: 10
     replicationFactor: 1
+  friendInvite:
+    topicName: friendInvite
+    partitions: 10
+    replicationFactor: 1

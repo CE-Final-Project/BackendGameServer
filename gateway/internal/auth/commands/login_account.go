@@ -6,6 +6,7 @@ import (
 	"github.com/ce-final-project/backend_game_server/gateway/config"
 	"github.com/ce-final-project/backend_game_server/gateway/internal/dto"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
+	"github.com/opentracing/opentracing-go"
 )
 
 type LoginAccountCmdHandler interface {
@@ -29,6 +30,9 @@ func NewLoginAccountHandler(log logger.Logger, cfg *config.Config, asClient auth
 }
 
 func (r *loginAccountHandler) Handle(ctx context.Context, command *LoginAccountCommand) (*dto.LoginAccountResponse, error) {
+	var span opentracing.Span
+	span, ctx = opentracing.StartSpanFromContext(ctx, "loginAccountHandler.Handle")
+	defer span.Finish()
 
 	loginResult, err := r.asClient.Login(ctx, &authService.LoginReq{
 		Username: command.LoginDto.Username,

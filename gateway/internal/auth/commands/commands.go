@@ -5,6 +5,7 @@ import "github.com/ce-final-project/backend_game_server/gateway/internal/dto"
 type AuthCommands struct {
 	RegisterAccount RegisterAccountCmdHandler
 	LoginAccount    LoginAccountCmdHandler
+	FriendInvite    FriendInviteCmdHandler
 }
 
 func NewAuthCommands(registerAccount RegisterAccountCmdHandler, loginAccount LoginAccountCmdHandler) *AuthCommands {
@@ -28,4 +29,12 @@ type LoginAccountCommand struct {
 
 func NewLoginAccountCommand(loginDto *dto.LoginAccount) *LoginAccountCommand {
 	return &LoginAccountCommand{LoginDto: loginDto}
+}
+
+type FriendInviteCommand struct {
+	FriendInviteDto *dto.FriendInvite
+}
+
+func NewFriendInviteCommand(friendInviteDto *dto.FriendInvite) *FriendInviteCommand {
+	return &FriendInviteCommand{FriendInviteDto: friendInviteDto}
 }
