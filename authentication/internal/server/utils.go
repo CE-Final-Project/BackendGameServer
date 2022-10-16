@@ -70,11 +70,18 @@ func (s *Server) initKafkaTopics(ctx context.Context) {
 		ReplicationFactor: s.cfg.KafkaTopics.AccountBan.ReplicationFactor,
 	}
 
+	friendInviteTopic := kafka.TopicConfig{
+		Topic:             s.cfg.KafkaTopics.FriendInvite.TopicName,
+		NumPartitions:     s.cfg.KafkaTopics.FriendInvite.Partitions,
+		ReplicationFactor: s.cfg.KafkaTopics.FriendInvite.ReplicationFactor,
+	}
+
 	if err := conn.CreateTopics(
 		accountRegisterTopic,
 		accountUpdateTopic,
 		changePasswordTopic,
 		banAccountTopic,
+		friendInviteTopic,
 	); err != nil {
 		s.log.WarnMsg("kafkaConn.CreateTopics", err)
 		return
@@ -85,5 +92,6 @@ func (s *Server) initKafkaTopics(ctx context.Context) {
 		accountUpdateTopic,
 		changePasswordTopic,
 		banAccountTopic,
+		friendInviteTopic,
 	})
 }

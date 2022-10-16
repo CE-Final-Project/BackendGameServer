@@ -44,6 +44,7 @@ type KafkaTopics struct {
 	ChangePassword  kafka.TopicConfig
 	AccountBan      kafka.TopicConfig
 	AccountDelete   kafka.TopicConfig
+	FriendInvite    kafka.TopicConfig
 }
 
 func InitConfig() (*Config, error) {

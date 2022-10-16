@@ -32,6 +32,10 @@ kafkaTopics:
     topicName: accountDelete
     partitions: 10
     replicationFactor: 1
+  friendInvite:
+    topicName: friendInvite
+    partitions: 10
+    replicationFactor: 1
 postgres:
   driver: "postgres"
   host: "database"
