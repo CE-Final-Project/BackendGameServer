@@ -19,6 +19,18 @@ definitions:
     - player_id
     - username
     type: object
+  dto.FriendInvite:
+    properties:
+      friend_player_id:
+        maxLength: 15
+        type: string
+      player_id:
+        maxLength: 15
+        type: string
+    required:
+    - friend_player_id
+    - player_id
+    type: object
   dto.LoginAccount:
     properties:
       password:
@@ -78,6 +90,26 @@ info:
   title: API Gateway Game Server (Client)
   version: "1.0"
 paths:
+  /friend:
+    post:
+      consumes:
+      - application/json
+      description: FriendRequest with PlayerID and FriendPlayerID
+      parameters:
+      - description: FriendRequest body request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.FriendInvite'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: FriendRequest
+      tags:
+      - Authentication
   /login:
     post:
       consumes:

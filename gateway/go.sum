@@ -54,6 +54,8 @@ github.com/ce-final-project/backend_game_server/pkg v0.0.0-20221013160152-1ae03a
 github.com/ce-final-project/backend_game_server/pkg v0.0.0-20221013160152-1ae03a4dbb70/go.mod h1:wUMvAD/TLqdt5svzcHEzDHsvNX0FTB+UE1NFuKj/RG8=
 github.com/ce-final-project/backend_game_server/proto v0.0.0-20221015123822-7b44436db305 h1:kbDFLD3zu4bgapLUV/K0DW/BOTKz4RbZomrZMCVe7mo=
 github.com/ce-final-project/backend_game_server/proto v0.0.0-20221015123822-7b44436db305/go.mod h1:7WvTx3gpxnRT6YZ6SM9UpCYn39/VV7mVTvCJji/QtBE=
+github.com/ce-final-project/backend_game_server/proto v0.0.0-20221015130103-cf4893324077 h1:WwTtPPpXO+DC3EmBzXYUESFWfbyKKCHHVN4CdCUo7/k=
+github.com/ce-final-project/backend_game_server/proto v0.0.0-20221015130103-cf4893324077/go.mod h1:7WvTx3gpxnRT6YZ6SM9UpCYn39/VV7mVTvCJji/QtBE=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=

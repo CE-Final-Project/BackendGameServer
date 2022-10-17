@@ -101,3 +101,39 @@ func (a *authsHandlers) Login() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, result)
 	}
 }
+
+// FriendRequest
+// @Tags Authentication
+// @Summary FriendRequest
+// @Description FriendRequest with PlayerID and FriendPlayerID
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param        request body dto.FriendInvite true "FriendRequest body request"
+// @Success 204
+// @Router /friend [post]
+func (a *authsHandlers) FriendRequest() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ctx, span := tracing.StartHttpServerTracerSpan(c, "FriendRequest.Login")
+		defer span.Finish()
+
+		FriendReqDto := &dto.FriendInvite{}
+		if err := c.Bind(FriendReqDto); err != nil {
+			a.log.WarnMsg("Bind", err)
+			return httpErrors.ErrorCtxResponse(c, err, a.cfg.HTTP.DebugErrorsResponse)
+		}
+
+		if err := a.v.StructCtx(ctx, FriendReqDto); err != nil {
+			a.log.WarnMsg("validate", err)
+			return httpErrors.ErrorCtxResponse(c, err, a.cfg.HTTP.DebugErrorsResponse)
+		}
+
+		command := commands.NewFriendInviteCommand(FriendReqDto)
+		err := a.as.Commands.FriendInvite.Handle(ctx, command)
+		if err != nil {
+			a.log.WarnMsg("FriendRequest", httpErrors.WrongCredentials)
+			return httpErrors.ErrorCtxResponse(c, httpErrors.WrongCredentials, a.cfg.HTTP.DebugErrorsResponse)
+		}
+		return c.JSON(http.StatusNoContent, nil)
+	}
+}

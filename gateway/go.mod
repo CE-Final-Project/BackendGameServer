@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/ce-final-project/backend_game_server/authentication v0.0.0-20221015130103-cf4893324077
 	github.com/ce-final-project/backend_game_server/pkg v0.0.0-20221013160152-1ae03a4dbb70
-	github.com/ce-final-project/backend_game_server/proto v0.0.0-20221015123822-7b44436db305
+	github.com/ce-final-project/backend_game_server/proto v0.0.0-20221015130103-cf4893324077
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/labstack/echo/v4 v4.9.0
