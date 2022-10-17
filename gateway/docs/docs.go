@@ -20,6 +20,37 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/friend": {
+            "post": {
+                "description": "FriendRequest with PlayerID and FriendPlayerID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "FriendRequest",
+                "parameters": [
+                    {
+                        "description": "FriendRequest body request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.FriendInvite"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Login with Username and Password",
@@ -113,6 +144,23 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 50,
                     "minLength": 3
+                }
+            }
+        },
+        "dto.FriendInvite": {
+            "type": "object",
+            "required": [
+                "friend_player_id",
+                "player_id"
+            ],
+            "properties": {
+                "friend_player_id": {
+                    "type": "string",
+                    "maxLength": 15
+                },
+                "player_id": {
+                    "type": "string",
+                    "maxLength": 15
                 }
             }
         },

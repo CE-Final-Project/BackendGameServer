@@ -33,9 +33,12 @@ func (s *grpcService) CreateRole(ctx context.Context, req *GRPCService.CreateRol
 	ctx, span = tracing.StartGrpcServerTracerSpan(ctx, "RoleGRPCService.CreateRole")
 	defer span.Finish()
 
-	md, _ := metadata.FromOutgoingContext(ctx)
+	var err error
+	var id uint64
+	md, _ := metadata.FromIncomingContext(ctx)
 
-	id, err := strconv.ParseUint(md.Get("id")[0], 10, 64)
+	id, err = strconv.ParseUint(md.Get("id")[0], 10, 64)
+	s.log.Debug(id)
 	if err != nil {
 		return nil, s.errResponse(codes.InvalidArgument, err)
 	}
@@ -65,7 +68,7 @@ func (s *grpcService) UpdateRole(ctx context.Context, req *GRPCService.UpdateRol
 
 	md, _ := metadata.FromOutgoingContext(ctx)
 
-	id, err := strconv.ParseUint(md.Get("id")[0], 10, 64)
+	id, err := strconv.ParseUint(md.Copy().Get("id")[0], 10, 64)
 	if err != nil {
 		return nil, s.errResponse(codes.InvalidArgument, err)
 	}

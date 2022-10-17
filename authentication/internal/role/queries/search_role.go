@@ -24,6 +24,11 @@ func (r *searchRoleHandler) Handle(ctx context.Context, query *SearchRoleQuery) 
 	span, ctx = opentracing.StartSpanFromContext(ctx, "searchRoleHandler.Handle")
 	defer span.Finish()
 
+	// default text query
+	if query.Text == "" {
+		query.Text = "%"
+	}
+
 	return r.roleRepo.SearchRole(ctx, query.Text, query.Pagination)
 }
 
@@ -33,5 +38,4 @@ func NewSearchRoleQueryHandler(log logger.Logger, cfg *config.Config, roleRepo r
 		cfg:      cfg,
 		roleRepo: roleRepo,
 	}
-
 }
