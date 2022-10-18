@@ -110,7 +110,7 @@ func (a *authsHandlers) Login() echo.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param        request body dto.FriendInvite true "FriendRequest body request"
-// @Success 204
+// @Success 200
 // @Router /friend [post]
 func (a *authsHandlers) FriendRequest() echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -134,6 +134,6 @@ func (a *authsHandlers) FriendRequest() echo.HandlerFunc {
 			a.log.WarnMsg("FriendRequest", httpErrors.WrongCredentials)
 			return httpErrors.ErrorCtxResponse(c, httpErrors.WrongCredentials, a.cfg.HTTP.DebugErrorsResponse)
 		}
-		return c.JSON(http.StatusNoContent, nil)
+		return c.NoContent(http.StatusOK)
 	}
 }

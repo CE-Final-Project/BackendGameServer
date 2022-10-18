@@ -37,7 +37,6 @@ func (f *friendInviteHandler) Handle(ctx context.Context, command *FriendInviteC
 	if err != nil {
 		return err
 	}
-
 	return f.kafkaProducer.PublishMessage(ctx, kafka.Message{
 		Topic:   f.cfg.KafkaTopics.FriendInvite.TopicName,
 		Value:   dtoBytes,

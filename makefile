@@ -15,3 +15,8 @@ proto_auth:
 swagger_gateway:
 	@echo Starting swagger generating
 	cd gateway && swag init -g ./cmd/main.go
+
+
+gen_rsa:
+	@echo Generating RSA...
+	cd rsa && openssl genrsa -out jwt 4096 && openssl rsa -in jwt -pubout -out jwt.pub

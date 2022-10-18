@@ -24,10 +24,11 @@ func NewAuthService(
 
 	registerCommandHandler := commands.NewRegisterAccountHandler(log, cfg, authService, accountService)
 	loginCommandHandler := commands.NewLoginAccountHandler(log, cfg, authService, accountService)
+	friendCommandHandler := commands.NewFriendInviteHandler(log, cfg, kafkaProducer)
 
 	verifyTokenQueryHandler := queries.NewVerifyTokenHandler(log, cfg, authService)
 
-	authCommands := commands.NewAuthCommands(registerCommandHandler, loginCommandHandler)
+	authCommands := commands.NewAuthCommands(registerCommandHandler, loginCommandHandler, friendCommandHandler)
 	authQueries := queries.NewAccountQueries(verifyTokenQueryHandler)
 
 	return &AuthService{

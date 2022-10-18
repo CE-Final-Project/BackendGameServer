@@ -1,12 +1,15 @@
 package config
 
 import (
+	"crypto/rsa"
 	kafkaClient "github.com/ce-final-project/backend_game_server/pkg/kafka"
 	"github.com/ce-final-project/backend_game_server/pkg/logger"
 	"github.com/ce-final-project/backend_game_server/pkg/postgres"
 	"github.com/ce-final-project/backend_game_server/pkg/redis"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"os"
 	"strings"
 	_ "time/tzdata"
 )
@@ -38,8 +41,9 @@ type KafkaTopics struct {
 }
 
 type JWT struct {
-	Secret     string `yaml:"secret"`
 	ExpireTime string `yaml:"expireTime"`
+	VerifyKey  *rsa.PublicKey
+	SignKey    *rsa.PrivateKey
 }
 
 func InitConfig() (*Config, error) {
@@ -58,6 +62,28 @@ func InitConfig() (*Config, error) {
 
 	if err := viper.Unmarshal(config); err != nil {
 		return nil, errors.Wrap(err, "viper.Unmarshal")
+	}
+
+	var signBytes []byte
+	signBytes, err = os.ReadFile(viper.GetString("jwt.privateKeyPath"))
+	if err != nil {
+		return nil, errors.Wrap(err, "os.ReadFile.signBytes")
+	}
+
+	config.JWT.SignKey, err = jwt.ParseRSAPrivateKeyFromPEM(signBytes)
+	if err != nil {
+		return nil, errors.Wrap(err, "jwt.ParseRSAPrivateKeyFromPEM")
+	}
+
+	var verifyBytes []byte
+	verifyBytes, err = os.ReadFile(viper.GetString("jwt.pubKeyPath"))
+	if err != nil {
+		return nil, errors.Wrap(err, "os.ReadFile.verifyBytes")
+	}
+
+	config.JWT.VerifyKey, err = jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
+	if err != nil {
+		return nil, errors.Wrap(err, "jwt.ParseRSAPublicKeyFromPEM")
 	}
 
 	return config, nil

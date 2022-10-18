@@ -20,7 +20,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"math/rand"
-	"strconv"
 	"time"
 )
 
@@ -86,7 +85,7 @@ func (g *grpcService) Login(ctx context.Context, req *authGRPCService.LoginReq) 
 		return nil, g.errResponse(codes.Unauthenticated, err)
 	}
 
-	token, err := g.generateJwtToken(strconv.FormatUint(account.ID, 10), account.PlayerID)
+	token, err := g.generateJwtToken(account.ID, account.PlayerID)
 	if err != nil {
 		g.log.WarnMsg("GenerateJWTToken", err)
 		return nil, g.errResponse(codes.Internal, err)
@@ -132,7 +131,7 @@ func (g *grpcService) Register(ctx context.Context, req *authGRPCService.Registe
 		return nil, g.errResponse(codes.Internal, err)
 	}
 	var token string
-	token, err = g.generateJwtToken(strconv.FormatUint(account.ID, 10), account.PlayerID)
+	token, err = g.generateJwtToken(account.ID, account.PlayerID)
 	if err != nil {
 		g.log.WarnMsg("GenerateJWTToken", err)
 		return nil, g.errResponse(codes.Internal, err)
@@ -171,37 +170,39 @@ func (g *grpcService) VerifyToken(ctx context.Context, req *authGRPCService.Veri
 	return result, nil
 }
 
-func (g *grpcService) generateJwtToken(accountID string, playerID string) (string, error) {
-	token := jwt.New(jwt.SigningMethodHS512)
-	claim := token.Claims.(jwt.MapClaims)
+func (g *grpcService) generateJwtToken(accountID uint64, playerID string) (string, error) {
+
 	m, err := time.ParseDuration(g.cfg.JWT.ExpireTime)
 	if err != nil {
 		return "", err
 	}
-	claim["exp"] = time.Now().Add(m).Unix()
-	claim["id"] = accountID
-	claim["player_id"] = playerID
-	tokenStr, err := token.SignedString([]byte(g.cfg.JWT.Secret))
-	if err != nil {
-		return "", err
-	}
-	return tokenStr, nil
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
+		"exp":       time.Now().Add(m).Unix(),
+		"id":        accountID,
+		"player_id": playerID,
+	})
+	return token.SignedString(g.cfg.JWT.SignKey)
 }
 
 func (g *grpcService) validateToken(tokenString string) (*authGRPCService.VerifyTokenRes, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, errors.New("jwt.Parse.Token.Method")
 		}
-		return []byte(g.cfg.JWT.Secret), nil
+		return g.cfg.JWT.VerifyKey, nil
 	})
 	if err != nil {
 		return nil, err
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+
+		//accountID, err := strconv.ParseUint(claims["id"].(string), 10, 64)
+		//if err != nil {
+		//	return nil, err
+		//}
 		return &authGRPCService.VerifyTokenRes{
 			Valid:     true,
-			AccountID: claims["id"].(uint64),
+			AccountID: uint64(claims["id"].(float64)),
 			PlayerID:  claims["player_id"].(string),
 		}, nil
 	} else {

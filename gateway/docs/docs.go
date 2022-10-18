@@ -22,6 +22,11 @@ const docTemplate = `{
     "paths": {
         "/friend": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "FriendRequest with PlayerID and FriendPlayerID",
                 "consumes": [
                     "application/json"

@@ -25,7 +25,7 @@ type middlewareManager struct {
 	as  *service.AuthService
 }
 
-func NewMiddlewareManager(log logger.Logger, cfg *config.Config, as *service.AuthService) *middlewareManager {
+func NewMiddlewareManager(log logger.Logger, cfg *config.Config, as *service.AuthService) MiddlewareManager {
 	return &middlewareManager{log: log, cfg: cfg, as: as}
 }
 
@@ -49,33 +49,6 @@ func (mw *middlewareManager) RequestLoggerMiddleware(next echo.HandlerFunc) echo
 	}
 }
 
-//func (mw *middlewareManager) AuthorizationMiddleware() echo.MiddlewareFunc {
-//
-//	jwtConfig := middleware.JWTConfig{
-//		TokenLookup: "header:" + mw.cfg.JWT.HeaderAuthorization,
-//		ParseTokenFunc: func(auth string, c echo.Context) (interface{}, error) {
-//			keyFunc := func(t *jwt.Token) (interface{}, error) {
-//				if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-//					return nil, errors.New("jwt.Parse.Token.Method=" + t.Header["alg"].(string))
-//				}
-//				return []byte(mw.cfg.JWT.Secret), nil
-//			}
-//
-//			// claims are of type `jwt.MapClaims` when token is created with `jwt.Parse`
-//			token, err := jwt.Parse(auth, keyFunc)
-//			if err != nil {
-//				return nil, err
-//			}
-//			if !token.Valid {
-//				return nil, errors.New("invalid token")
-//			}
-//			return token, nil
-//		},
-//	}
-//
-//	return middleware.JWTWithConfig(jwtConfig)
-//}
-
 func (mw *middlewareManager) AuthorizationMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -93,7 +66,7 @@ func (mw *middlewareManager) AuthorizationMiddleware() echo.MiddlewareFunc {
 
 			result, err := mw.as.Queries.VerifyToken.Handle(ctx, query)
 			if err != nil {
-				return httpErrors.ErrorCtxResponse(c, httpErrors.WrongCredentials, mw.cfg.HTTP.DebugErrorsResponse)
+				return httpErrors.NewUnauthorizedError(c, err, mw.cfg.HTTP.DebugErrorsResponse)
 			}
 			mw.log.Debugf("Result verifyToken %v", result)
 			if !result.Valid {

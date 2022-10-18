@@ -8,10 +8,11 @@ type AuthCommands struct {
 	FriendInvite    FriendInviteCmdHandler
 }
 
-func NewAuthCommands(registerAccount RegisterAccountCmdHandler, loginAccount LoginAccountCmdHandler) *AuthCommands {
+func NewAuthCommands(registerAccount RegisterAccountCmdHandler, loginAccount LoginAccountCmdHandler, friendInvite FriendInviteCmdHandler) *AuthCommands {
 	return &AuthCommands{
 		RegisterAccount: registerAccount,
 		LoginAccount:    loginAccount,
+		FriendInvite:    friendInvite,
 	}
 }
 
