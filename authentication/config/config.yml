@@ -49,5 +49,6 @@ redis:
   db: 0
   poolSize: 300
 jwt:
-  secret: "m%Pha8*Z6$hnUCYR@DtCY%7j!S#xceGFuC3Qd6^Nte&7&SkucS"
   expireTime: "10m"
+  privateKeyPath: "./rsa/jwt"
+  pubKeyPath: "./rsa/jwt.pub"

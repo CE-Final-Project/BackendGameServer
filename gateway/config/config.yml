@@ -15,7 +15,7 @@ http:
   ignoreLogUrls: []
 jwt:
   headerAuthorization: X-AUTH-TOKEN
-  secret: "m%Pha8*Z6$hnUCYR@DtCY%7j!S#xceGFuC3Qd6^Nte&7&SkucS"
+
 kafka:
   brokers: [ "kafka:9092" ]
   groupID: game_microservice_consumer

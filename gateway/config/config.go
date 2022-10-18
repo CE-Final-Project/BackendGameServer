@@ -21,7 +21,6 @@ type Config struct {
 
 type JWT struct {
 	HeaderAuthorization string `yaml:"headerAuthorization"`
-	Secret              string `yaml:"secret"`
 }
 
 type Http struct {
